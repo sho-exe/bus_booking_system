@@ -1,0 +1,29 @@
+# --- NetBeans Specific ---
+# Contains user-specific settings (like file paths on your machine)
+**/nbproject/private/
+
+# Build and distribution directories
+**/build/
+**/dist/
+**/nbbuild/
+**/nbdist/
+
+# Configuration and Action files (often contain local paths)
+**/nbactions.xml
+**/nb-configuration.xml
+**/.nb-gradle/
+
+# --- General Java/Build Artifacts ---
+# If you are using Maven
+**/target/
+
+# If you are using Gradle
+**/.gradle/
+**/build/
+
+# Log files
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
