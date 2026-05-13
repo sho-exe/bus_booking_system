@@ -8,6 +8,14 @@
         <servlet-name>TripServlet</servlet-name>
         <servlet-class>controller.TripServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>BusCRUD</servlet-name>
+        <servlet-class>controller.BusCRUD</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>BusServlet</servlet-name>
+        <servlet-class>controller.BusServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>BookingServlet</servlet-name>
         <url-pattern>/booking</url-pattern>
@@ -15,6 +23,14 @@
     <servlet-mapping>
         <servlet-name>TripServlet</servlet-name>
         <url-pattern>/TripServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>BusCRUD</servlet-name>
+        <url-pattern>/BusCRUD</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>BusServlet</servlet-name>
+        <url-pattern>/BusServlet</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
