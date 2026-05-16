@@ -79,6 +79,8 @@ public class BusDAO {
         }
         return buses;
     }
+    
+    
 
     public Bus selectBus(int id) {
         Bus bus = null;
@@ -107,7 +109,7 @@ public class BusDAO {
             stmt.setString(1, bus.getBusNumber());
             stmt.setString(2, bus.getBusType());
             stmt.setInt(3, bus.getTotalSeat());
-            stmt.setInt(4, bus.getID());
+            stmt.setInt(4, bus.getBusId());
             rowUpdated = stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();

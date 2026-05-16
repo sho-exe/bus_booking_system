@@ -33,11 +33,11 @@ public class Bus {
     }
     
     
-    public int getID(){
+    public int getBusId(){
         return busID;
     }
     
-    public void setID(int busID){
+    public void setBusId(int busID){
         this.busID = busID;
     }
     

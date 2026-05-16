@@ -33,8 +33,7 @@
 <header class="top-header">
     <div class="header-branding">
         <h1>Sani Express</h1>
-        
-        <p>Welcome, ${username} </p> </div>
+        <p>Welcome, Johan Daud</p> </div>
     <div class="header-actions">
         <button class="header-action-btn" style="font-weight:bold">LOG OUT</button>
     </div>

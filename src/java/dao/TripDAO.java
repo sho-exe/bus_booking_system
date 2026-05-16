@@ -15,6 +15,8 @@ public class TripDAO {
         Class.forName("com.mysql.cj.jdbc.Driver");
         return DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
     }
+    
+    
 
     private Trip mapRow(ResultSet rs) throws SQLException {
         return new Trip(
@@ -55,52 +57,110 @@ public class TripDAO {
 
     public List<Trip> searchTrips(String origin, String destination, String departure_time) {
         List<Trip> list = new ArrayList<>();
-//        String sql = "SELECT * FROM Trip WHERE origin LIKE ? OR destination LIKE ?";
-        String sql = "SELECT * FROM Trip WHERE origin = ? AND destination = ? ";
 
-        try {
-            Connection conn = getConnection();
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, origin);
-            ps.setString(2, destination);
+        // 1. Use t.* to get all Trip columns so mapRow doesn't crash
+        String sql = "SELECT t.* "
+                + "FROM Trip t "
+                + "WHERE t.origin LIKE ? "
+                + "AND t.destination LIKE ? "
+                + "AND DATE(t.departure_time) = ?";
 
-            ResultSet rs = ps.executeQuery();
+        // 2. Use try-with-resources to ensure the connection ALWAYS closes
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            while (rs.next()) {
-                list.add(mapRow(rs));
+            ps.setString(1, "%" + origin + "%");
+            ps.setString(2, "%" + destination + "%");
+            ps.setString(3, departure_time);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    // Now mapRow gets all the trip data it expects + the extra bus data
+                    list.add(mapRow(rs));
+                }
             }
-
-            rs.close();
-            ps.close();
-            conn.close();
-
         } catch (ClassNotFoundException | SQLException e) {
+            // This will print the error to your console
             e.printStackTrace();
         }
 
         return list;
     }
 
-//    JUST TO TEST
-//
-//    public static void main(String[] args) {
-//        TripDAO dao = new TripDAO();
-//        List<Trip> trips = dao.searchTrips("1", "2", "3");
-//
-//        
-//        
-//        
-//        for (Trip t : trips) {
-//            System.out.println(
-//                    t.getTripId() + " | "
-//                    + t.getOrigin() + " | "
-//                    + t.getDestination() + " | "
-//                    + t.getDepartureTime() + " | "
-//                    + t.getArrivalTime() + " | "
-//                    + t.getPrice() + " | "
-//                    + t.getBusId() + " | "
-//                    + t.getDriverId()
-//            );
-//        }
-//    }
+    public Trip getTripById(int id) {
+        Trip trip = null;
+        String sql = "SELECT * FROM trip WHERE trip_id = ?";
+
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    trip = new Trip();
+                    trip.setTripId(rs.getInt("trip_id"));
+                    trip.setOrigin(rs.getString("origin"));
+                    trip.setDestination(rs.getString("destination"));
+                    trip.setDepartureTime(rs.getString("departure_time"));
+                    trip.setArrivalTime(rs.getString("arrival_time"));
+                    trip.setPrice(rs.getDouble("price"));
+                    trip.setBusId(rs.getInt("bus_id"));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return trip;
+    }
+
+    public void addTrip(Trip trip) {
+        String sql = "INSERT INTO trip (origin, destination, departure_time, arrival_time, bus_id, price) "
+                + "VALUES (?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, trip.getOrigin());
+            ps.setString(2, trip.getDestination());
+            ps.setString(3, trip.getDepartureTime());
+            ps.setString(4, trip.getArrivalTime());
+            ps.setInt(5, trip.getBusId());
+            ps.setDouble(6, trip.getPrice());
+
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateTrip(Trip trip) {
+        String sql = "UPDATE trip SET origin=?, destination=?, "
+                + "departure_time=?, arrival_time=?, bus_id=?, price=? "
+                + "WHERE trip_id=?";
+
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, trip.getOrigin());
+            ps.setString(2, trip.getDestination());
+            ps.setString(3, trip.getDepartureTime());
+            ps.setString(4, trip.getArrivalTime());
+            ps.setInt(5, trip.getBusId());
+            ps.setDouble(6, trip.getPrice());
+            ps.setInt(7, trip.getTripId());
+
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteTrip(int id) {
+        String sql = "DELETE FROM trip WHERE trip_id=?";
+
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

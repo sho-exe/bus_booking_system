@@ -1,3 +1,4 @@
+<%@page import="model.Bus"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="en">
@@ -87,36 +88,47 @@
             <div class="results-container">
                 <h2 class="section-title" style="margin-top: 30px;">Available Trips for <%= trip_date%></h2>
 
+
             </div>
             <% }%>
 
-            <%
+          <%
+    if (request.getAttribute("trips") != null && request.getAttribute("busList") != null) {
+        List<Trip> trips = (List<Trip>) request.getAttribute("trips");
+        List<Bus> busList = (List<Bus>) request.getAttribute("busList");
 
-                if (request.getAttribute("trips") != null) {
-
-                    List<Trip> trips = (List<Trip>) request.getAttribute("trips");
-
-                    for (Trip t : trips) {
-            %>
-            <div class="trip-card">
-                <div class="trip-info">
-                    <h3><%= t.getDepartureTime()%></h3>
-                    <p class="route"><%= t.getOrigin()%> &rarr; <%= t.getDestination()%></p>
-                    <p class="bus-type">Standard 2+2 • 22 Seats Left</p>
-                </div>
-                <div class="trip-action">
-                    <div class="price">RM <%= t.getPrice()%></div>
-                    <form action="SelectSeat.jsp" method="POST">
-                        <input type="hidden" name="origin" value="<%= t.getOrigin()%>">
-                        <input type="hidden" name="destination" value="<%= t.getDestination()%>">
-                        <input type="hidden" name="trip_date" value="<%= t.getDepartureTime()%>">
-                        <input type="hidden" name="price" value="<%= t.getPrice()%>">
-                        <button type="submit" class="btn-select">Select Seat</button>
-                    </form>
-                </div>
-            </div>
-            <% }
-                }%>
+        // Use a counter to stay in sync with the bus list
+        for (int i = 0; i < trips.size(); i++) {
+            Trip t = trips.get(i);
+            Bus b = busList.get(i); // This gets the matching bus for this trip
+%>
+    <div class="trip-card">
+        <div class="trip-info">
+            <h3><%= t.getDepartureTime()%></h3>
+            <p class="route"><%= t.getOrigin()%> &rarr; <%= t.getDestination()%></p>
+            
+            <p class="bus-type">
+                <%= b.getBusType() %> • <%= b.getBusNumber() %> • <%= b.getTotalSeat() %> Seats Total
+            </p>
+        </div>
+        
+        <div class="trip-action">
+            <div class="price">RM <%= t.getPrice()%></div>
+            <form action="SelectSeat.jsp" method="POST">
+                <input type="hidden" name="trip_id" value="<%= t.getTripId()%>">
+                <input type="hidden" name="bus_id" value="<%= b.getBusId()%>">
+                <input type="hidden" name="origin" value="<%= t.getOrigin()%>">
+                <input type="hidden" name="destination" value="<%= t.getDestination()%>">
+                <input type="hidden" name="trip_date" value="<%= t.getDepartureTime()%>">
+                <input type="hidden" name="price" value="<%= t.getPrice()%>">
+                <button type="submit" class="btn-select">Select Seat</button>
+            </form>
+        </div>
+    </div>
+<% 
+        } // end loop
+    } // end if
+%>
         </div>
 
     </body>
