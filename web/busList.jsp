@@ -1,80 +1,61 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@page import="dao.BusDAO, java.util.*, model.Bus"%>
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Bus List</title>
 
-        <%
+<%
+    ArrayList<Bus> busList = (ArrayList<Bus>) request.getAttribute("listBus");
+%>
 
-            ArrayList<Bus> busList = (ArrayList<Bus>) request.getAttribute("listBus");
+<div class="table-card">
+    <div class="section-header">
+        <h2>Bus Management</h2>
+        <a href="BusServlet?action=new" class="btn-add">
+            <i class="fa-solid fa-plus"></i> Add Bus
+        </a>
+    </div>
 
+    <h3>All Buses</h3>
+    <table class="admin-table">
+        <tr>
+            <th>ID</th>
+            <th>Bus Number</th>
+            <th>Bus Type</th>
+            <th>Total Seats</th>
+            <th>Actions</th>
+        </tr>
 
-        %>
-
-        <link rel="stylesheet" href="style.css">
-    </head>
-    <body>
-
-        <div class="header">
-            <h1>Sani Express</h1>
-        </div>
-
-
-        <div class="container">
-            <h1>Bus Inventory</h1>
-            <a href="BusServlet?action=new" class="btn-add">Add New Bus</a>
-            <br><br>
-            <div class="table-card">
-                <table border="1">
-                    <tr>
-                        <th>ID</th>
-                        <th>Bus Number</th>
-                        <th>Bus Type</th>
-                        <th>Total Seat</th>
-                        <th>Action</th>
-                    </tr>
-            </div>
-        </div>
-        <%      for (Bus bus : busList) {
-                out.println("<tr>");
-
-                out.print("<td>" + bus.getID() + "</td>");
-                out.print("<td>" + bus.getBusNumber() + "</td>");
-
+        <% if (busList != null && !busList.isEmpty()) {
+            for (Bus bus : busList) {
                 String type = bus.getBusType().toLowerCase();
-                String badgeClass = "";
-
-                if (type.contains("double")) {
-                    badgeClass = "double";
-                } else if (type.contains("single")) {
-                    badgeClass = "single";
-                }
-
-                out.print("<td><span class='badge " + badgeClass + "'>"
-                        + bus.getBusType() + "</span></td>");
-
-                out.print("<td>" + bus.getTotalSeat() + "</td>");
-
-                out.println("<td>");
-                out.println("<a class='btn edit' href='BusServlet?action=edit&busID=" + bus.getID() + "'>Edit</a>");
-                out.println("<a class='btn delete' href='BusServlet?action=delete&id=" + bus.getID() + "' onclick='return confirmDelete()'>Delete</a>");
-                out.println("</td>");
-
-                out.println("</tr>");
-            }
-
+                String badgeColor = type.contains("double") ? "#eab308" : "#3b82f6";
         %>
-
-
+        <tr>
+            <td><%= bus.getBusId() %></td>
+            <td><span class="stack-main"><%= bus.getBusNumber() %></span></td>
+            <td>
+                <span style="background: <%= badgeColor %>; color: white; padding: 4px 8px; border-radius: 12px; font-size: 12px; font-weight: 600;">
+                    <%= bus.getBusType() %>
+                </span>
+            </td>
+            <td><%= bus.getTotalSeat() %></td>
+            <td>
+                <div class="action-btns">
+                    <a href="BusServlet?action=edit&busID=<%= bus.getBusId() %>" class="btn-icon">
+                        <i class="fa-solid fa-pen"></i>
+                    </a>
+                    <a href="BusServlet?action=delete&id=<%= bus.getBusId() %>" 
+                       class="btn-icon delete"
+                       onclick="return confirm('Are you sure you want to delete this bus?')">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </a>
+                </div>
+            </td>
+        </tr>
+        <%  }
+        } else { %>
+        <tr>
+            <td colspan="5" style="text-align:center; padding: 40px; color:#9ca3af;">No buses found in the database.</td>
+        </tr>
+        <% } %>
     </table>
-
-
-    <script>
-        function confirmDelete() {
-            return confirm("Are you sure you want to delete this bus?");
-        }
-    </script>
-</body>
-</html>
+</div>

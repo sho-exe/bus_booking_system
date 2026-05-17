@@ -61,10 +61,12 @@ public class UserDAO {
 
             if (rs.next()) {
                 return new User(
+                        rs.getString("id"),
                         rs.getString("username"),
                         rs.getString("email"),
                         rs.getString("password"),
-                        rs.getString("role")
+                        rs.getString("role"),
+                        rs.getString("phone_number")
                 );
             }
 
@@ -87,10 +89,12 @@ public class UserDAO {
 
             while (rs.next()) {
                 User user = new User(
+                        rs.getString("id"),
                         rs.getString("username"),
                         rs.getString("email"),
                         rs.getString("password"),
-                        rs.getString("role")
+                        rs.getString("role"),
+                        rs.getString("phone_number")
                 );
 
                 users.add(user);

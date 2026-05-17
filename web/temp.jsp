@@ -1,83 +1,122 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.sql.*" %>
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Temp</title>
+    </head>
+    <body>
+        <pre>
+=== SESSION DATA ===
+TRIP ID: <%= session.getAttribute("trip_id") %>
+TOTAL PRICE: <%= session.getAttribute("total_price") %>
+
+=== SELECTED SEATS (from session) ===
+<%
+    String[] selectedSeats = (String[]) session.getAttribute("selected_seats");
+    if (selectedSeats != null && selectedSeats.length > 0) {
+        for (String seat : selectedSeats) {
+            out.println("Seat: " + seat);
+        }
+    } else {
+        out.println("No seats selected.");
+    }
+%>
+
+=== BOOKER DETAILS ===
+booker_name:  <%= request.getParameter("booker_name") %>
+<%
+    
+session.setAttribute("booker_name", request.getParameter("booker_name"));%>
+booker_phone: <%= request.getParameter("booker_phone") %>
+
+<%
+session.setAttribute("booker_phone", request.getParameter("booker_phone"));%>
+
+
+=== PASSENGER + BOOKING INSERT RESULT ===
 <%
     String[] seats = request.getParameterValues("seat_number");
     String[] names = request.getParameterValues("passenger_name");
-    String[] phones = request.getParameterValues("passenger_phone");
+    String[] ages  = request.getParameterValues("passenger_phone");
+    int tripId     = Integer.parseInt((String) session.getAttribute("trip_id"));
 
-    String total_price = request.getParameter("total_price");
+    String jdbcURL      = "jdbc:mysql://localhost:3306/bus";
+    String jdbcUsername = "root";
+    String jdbcPassword = "";
 
-    Double total_price_Double = Double.parseDouble(total_price);
+    boolean insertSuccess = false;
 
-    String origin = (String) session.getAttribute("origin");
-    String destination = (String) session.getAttribute("destination");
-    String trip_date = (String) session.getAttribute("trip_date");
-    String price = (String) session.getAttribute("price");
+    if (seats != null) {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection conn = DriverManager.getConnection(jdbcURL, jdbcUsername, jdbcPassword);
+            conn.setAutoCommit(false);
 
+            String insertPassengerSql = "INSERT INTO Passenger (name, age) VALUES (?, ?)";
+            String insertBookingSql   = "INSERT INTO Booking (passenger_id, trip_id, seat) VALUES (?, ?, ?)";
 
-%>
-<%@page contentType = "text/html" pageEncoding = "UTF-8"%>
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
-    </head>
-    <body>
-<!--
-        <h1><i>RECEIVE FROM TRIP</i></h1>
-
-        <h2>trip_id</h2>
-        <h2>origin</h2>
-        <h2>destination</h2>
-        <h2>departure_time</h2>
-        <h2>arrival_time</h2>
-        <h2>price</h2>
-        <h2>bus_id</h2>
-        <h2>driver_id</h2>
-
-        <h1><i>RECEIVE FROM BUS (to know total seats) </i></h1>
-
-        <h2>bus_id</h2>
-        <h2>bus_number</h2>
-        <h2>bus_type</h2>
-        <h2>total_seats</h2>
-
-        <h1><i>RECEIVE FROM BOOKING (to check seats taken)</i></h1>
-
-        <h2>booking_id</h2>
-        <h2>booking_date</h2>
-        <h2>status</h2>
-        <h2>passenger_id</h2>
-        <h2>trip_id</h2>
-        <h2>staff_id</h2>
-        <h2>seat</h2>
-
-        <h1><i>INSERT TO BOOKING (1person 1seat)</i></h1>
-
-        <h2>booking_id</h2>
-        <h2>booking_date</h2>
-        <h2>status</h2>
-        <h2>passenger_id</h2>
-        <h2>trip_id</h2>
-        <h2>staff_id</h2>
-        <h2>seat</h2>-->
-
-
-        <h1><i>REDIRECT TO PAYMENT PAGE</i></h1>
-
-
-
-
-        <h1>From "<%=origin%>" to "<%=destination%>" on "<%=trip_date%>" with RM<%=String.format("%.2f", total_price_Double)%></h1>
-
-        <%
+            PreparedStatement passengerStmt = conn.prepareStatement(insertPassengerSql, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement bookingStmt   = conn.prepareStatement(insertBookingSql);
 
             for (int i = 0; i < seats.length; i++) {
+                String name = (names != null) ? names[i] : "null";
+                String age  = (ages  != null) ? ages[i]  : "null";
+                String seat = seats[i];
 
-        %>
-        <h1>"Seat " <%=seats[i]%>" belongs to " <%=names[i]%> " " <%= phones[i]%> "</h1>
+                out.println("--- Seat: " + seat + " ---");
+                out.println("Name: " + name);
+                out.println("Age:  " + age);
 
-        <%
+                try {
+                    passengerStmt.setString(1, name);
+                    passengerStmt.setString(2, age);
+                    passengerStmt.executeUpdate();
+
+                    ResultSet rs = passengerStmt.getGeneratedKeys();
+                    if (rs.next()) {
+                        int passengerId = rs.getInt(1);
+                        out.println("Passenger INSERT OK — passenger_id: " + passengerId);
+
+                        bookingStmt.setInt(1, passengerId);
+                        bookingStmt.setInt(2, tripId);
+                        bookingStmt.setInt(3, Integer.parseInt(seat));
+                        bookingStmt.executeUpdate();
+                        out.println("Booking INSERT OK — trip_id: " + tripId + ", seat: " + seat);
+                    } else {
+                        out.println("Passenger INSERT FAILED: no generated key");
+                        conn.rollback();
+                    }
+                } catch (SQLException ex) {
+                    out.println("INSERT FAILED: " + ex.getMessage());
+                    conn.rollback();
+                }
+
+                out.println();
             }
-        %>
+
+            conn.commit();
+            out.println("=== ALL INSERTS COMMITTED ===");
+
+            passengerStmt.close();
+            bookingStmt.close();
+            conn.close();
+
+            insertSuccess = true;
+
+        } catch (Exception e) {
+            out.println("CONNECTION ERROR: " + e.getMessage());
+        }
+    } else {
+        out.println("No passenger data found.");
+    }
+%>
+        </pre>
+
+        <%-- Redirect only after all output is done --%>
+        <% if (insertSuccess) { %>
+            <script>window.location.href = "createPayment.jsp";</script>
+        <% } %>
     </body>
 </html>

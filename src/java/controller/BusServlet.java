@@ -99,7 +99,8 @@ public class BusServlet extends HttpServlet {
             throws ServletException, IOException {
         ArrayList<Bus> listBus = busDAO.selectAllBuses();
         request.setAttribute("listBus", listBus);
-        request.getRequestDispatcher("busList.jsp").forward(request, response);
+        request.setAttribute("activeTab", "buses");
+        request.getRequestDispatcher("admin.jsp").forward(request, response);
     }
 
     private void showNewForm(HttpServletRequest request, HttpServletResponse response)

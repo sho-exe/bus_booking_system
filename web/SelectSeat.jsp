@@ -12,6 +12,7 @@
     <body>
 
         <%
+            String trip_id = (String) session.getAttribute("trip_id");
             String origin = request.getParameter("origin");
             String destination = request.getParameter("destination");
             String trip_date = request.getParameter("trip_date");
@@ -40,7 +41,9 @@
             <br>
             <a href="booking" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Back to Search</a>
 
-            <form action="PassengerDetails.jsp" method="POST">
+                        <form action="PassengerDetails.jsp" method="POST">
+
+            <!--<form action="temp.jsp" method="POST">-->
                 <div class="layout-grid">
 
                     <div class="left-col">
@@ -125,9 +128,27 @@
                         
                         -->
 
-                        <%                            int totalSeats = 31;
-                            String[] bookedSeats = {"5", "6"};
-                            java.util.Set<String> bookedSet = new java.util.HashSet<>(java.util.Arrays.asList(bookedSeats));
+                        <%@ page import="java.util.List" %>
+                        <%@ page import="dao.BookingDAO" %>
+                        <%                            
+                            String tripIdStr = request.getParameter("trip_id");
+                            if (tripIdStr != null) {
+                                session.setAttribute("trip_id", tripIdStr);
+                            } else {
+                                tripIdStr = (String) session.getAttribute("trip_id");
+                            }
+
+                            int totalSeats = 31;
+                            List<Integer> bookedList = new java.util.ArrayList<>();
+                            if (tripIdStr != null && !tripIdStr.isEmpty()) {
+                                int tripId = Integer.parseInt(tripIdStr);
+                                bookedList = new BookingDAO().getBookedSeatsByTrip(tripId);
+                            }
+                            
+                            java.util.Set<String> bookedSet = new java.util.HashSet<>();
+                            for(Integer seat : bookedList) {
+                                bookedSet.add(String.valueOf(seat));
+                            }
                         %>
 
                         <div class="bus-container">
@@ -162,6 +183,11 @@
                     <div class="right-col">
                         <h2 class="section-title">Booking Summary</h2>
 
+                        
+                        <div class="summary-row bold">
+                            <span>Route:</span>
+                            <span><%=session.getAttribute("trip_id")%></span>
+                        </div>
                         <div class="summary-row bold">
                             <span>Route:</span>
                             <span><%=session.getAttribute("origin")%> &rarr; <%=session.getAttribute("destination")%></span>

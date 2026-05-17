@@ -35,7 +35,7 @@
         <h1>Sani Express - Staff Portal</h1>
         <p>Edit trip details</p>
     </div>
-    <button class="btn-logout" onclick="location.href='TripController?action=list'">Back to Dashboard</button>
+    <button class="btn-logout" onclick="location.href='TripServlet?action=list'">Back to Dashboard</button>
 </header>
 
 <div class="admin-container" style="max-width: 600px; margin-top: 60px;">
@@ -43,7 +43,7 @@
         <h2>Edit Trip</h2>
         <p>Modify the trip details below</p>
         
-        <form action="TripController?action=update" method="post">
+        <form action="TripServlet?action=update" method="post">
             <input type="hidden" name="trip_id" value="${trip.tripId}">
             
             <div class="form-group">
@@ -54,18 +54,14 @@
                 <label>Destination</label>
                 <input type="text" name="destination" value="${trip.destination}" class="form-input" required>
             </div>
-            <div class="form-group">
-                <label>Date</label>
-                <input type="date" name="tripDate" value="${trip.tripDate}" class="form-input" required>
-            </div>
             <div style="display: flex; gap: 20px;">
                 <div class="form-group" style="flex: 1;">
                     <label>Departure Time</label>
-                    <input type="time" name="departureTime" value="${trip.departureTime}" class="form-input" required>
+                    <input type="datetime-local" name="departureTime" value="${trip.departureTime}" class="form-input" required>
                 </div>
                 <div class="form-group" style="flex: 1;">
                     <label>Arrival Time</label>
-                    <input type="time" name="arrivalTime" value="${trip.arrivalTime}" class="form-input" required>
+                    <input type="datetime-local" name="arrivalTime" value="${trip.arrivalTime}" class="form-input" required>
                 </div>
             </div>
             <div class="form-group">
@@ -74,7 +70,7 @@
                     <option value="">-- Select Bus --</option>
                     <c:forEach var="bus" items="${busTypes}">
                         <option value="${bus.busId}" <c:if test="${bus.busId == trip.busId}">selected</c:if>>
-                            ${bus.busNumber} (${bus.busType} - ${bus.totalSeats} Seats)
+                            ${bus.busNumber} (${bus.busType} - ${bus.totalSeat} Seats)
                         </option>
                     </c:forEach>
                 </select>

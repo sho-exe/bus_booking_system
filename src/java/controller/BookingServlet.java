@@ -23,6 +23,11 @@ public class BookingServlet extends HttpServlet {
 
         if (action.equals("search")) {
             searchTrips(request, response);
+        } else if (action.equals("adminList")) {
+            dao.BookingDAO bookingDAO = new dao.BookingDAO();
+            request.setAttribute("bookings", bookingDAO.getAllBookings());
+            request.setAttribute("activeTab", "bookings");
+            request.getRequestDispatcher("admin.jsp").forward(request, response);
         } else {
             request.getRequestDispatcher("/Booking.jsp").forward(request, response);
         }
@@ -50,4 +55,43 @@ public class BookingServlet extends HttpServlet {
         request.getRequestDispatcher("/Booking.jsp").forward(request, response);
     }
 
-}
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String action = request.getParameter("action");
+        if ("insert".equals(action)) {
+            String[] seats = request.getParameterValues("seat_number");
+            String[] names = request.getParameterValues("passenger_name");
+            String[] phones = request.getParameterValues("passenger_phone");
+            String tripIdStr = request.getParameter("trip_id");
+            
+            if (tripIdStr != null && !tripIdStr.isEmpty() && seats != null) {
+                int tripId = Integer.parseInt(tripIdStr);
+                String priceStr = (String) request.getSession().getAttribute("price");
+                double price = priceStr != null ? Double.parseDouble(priceStr) : 0.0;
+                String username = (String) request.getSession().getAttribute("username");
+                if (username == null) username = "guest"; // fallback
+                
+                dao.BookingDAO bookingDAO = new dao.BookingDAO();
+                
+                for (int i = 0; i < seats.length; i++) {
+                    model.Booking b = new model.Booking();
+                    b.setSeatNumber(Integer.parseInt(seats[i]));
+                    b.setPassengerName(names[i]);
+                    b.setPassengerPhone(phones[i]);
+                    b.setTripId(tripId);
+                    b.setPrice(price);
+                    b.setUsername(username);
+                    
+                    
+                    bookingDAO.addBooking(b);
+                    
+                    
+                }
+            }
+            
+            response.sendRedirect("customer.jsp");
+        } else {
+            response.sendRedirect("Booking.jsp");
+        }
+    }}

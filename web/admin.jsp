@@ -1,5 +1,9 @@
 <%@page import="java.sql.*"%>
+<%@page import="dao.TripDAO"%>
+<%@page import="dao.BusDAO"%>
+<%@page import="dao.BookingDAO"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -56,19 +60,29 @@
     <button class="btn-logout" onclick="location.href='login.html'">Logout</button>
 </header>
 
+<%
+    TripDAO tripDAO = new TripDAO();
+    BusDAO busDAO = new BusDAO();
+    BookingDAO bookingDAO = new BookingDAO();
+    
+    int totalTrips = tripDAO.getAllTrips() != null ? tripDAO.getAllTrips().size() : 0;
+    int totalBuses = busDAO.selectAllBuses() != null ? busDAO.selectAllBuses().size() : 0;
+    int totalBookings = bookingDAO.getAllBookings() != null ? bookingDAO.getAllBookings().size() : 0;
+%>
+
 <div class="admin-container">
     <div class="stat-cards">
         <div class="stat-card">
             <div class="stat-info">
                 <h3>Total Trips</h3>
-                <h2>${trips != null ? trips.size() : '0'}</h2>
+                <h2><%= totalTrips %></h2>
             </div>
             <div class="stat-icon"><i class="fa-solid fa-location-dot"></i></div>
         </div>
         <div class="stat-card">
             <div class="stat-info">
                 <h3>Total Buses</h3>
-                <h2>10</h2>
+                <h2><%= totalBuses %></h2>
             </div>
             <div class="stat-icon"><i class="fa-solid fa-bus"></i></div>
         </div>
@@ -82,28 +96,38 @@
         <div class="stat-card">
             <div class="stat-info">
                 <h3>Total Bookings</h3>
-                <h2>12</h2>
+                <h2><%= totalBookings %></h2>
             </div>
             <div class="stat-icon"><i class="fa-solid fa-ticket"></i></div>
         </div>
     </div>
 
     <div class="admin-tabs">
-        <a href="TripServlet?action=list" class="admin-tab active">
+        <a href="TripServlet?action=list" class="admin-tab ${activeTab == 'trips' || empty activeTab ? 'active' : ''}">
             <i class="fa-solid fa-location-dot"></i> Trips
         </a>
-        <a href="#" class="admin-tab">
+        <a href="BusServlet?action=list" class="admin-tab ${activeTab == 'buses' ? 'active' : ''}">
             <i class="fa-solid fa-bus"></i> Buses
         </a>
         <a href="#" class="admin-tab">
             <i class="fa-solid fa-user-group"></i> Drivers
         </a>
-        <a href="#" class="admin-tab">
+        <a href="BookingServlet?action=adminList" class="admin-tab ${activeTab == 'bookings' ? 'active' : ''}">
             <i class="fa-solid fa-ticket"></i> Bookings
         </a>
     </div>
 
-                <jsp:include page="trip-list.jsp"/>    
+    <c:choose>
+        <c:when test="${activeTab == 'buses'}">
+            <jsp:include page="busList.jsp"/>
+        </c:when>
+        <c:when test="${activeTab == 'bookings'}">
+            <jsp:include page="booking-list.jsp"/>
+        </c:when>
+        <c:otherwise>
+            <jsp:include page="trip-list.jsp"/>
+        </c:otherwise>
+    </c:choose>
 
 </div>
 

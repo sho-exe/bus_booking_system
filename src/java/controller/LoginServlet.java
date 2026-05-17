@@ -24,6 +24,10 @@ public class LoginServlet extends HttpServlet {
             HttpSession session = request.getSession();
             session.setAttribute("username", user.getUsername());
             session.setAttribute("userRole", user.getRole());
+            session.setAttribute("email", user.getEmail());
+            session.setAttribute("phoneNumber", user.getPhoneNumber());
+            
+
 
             if ("System Admin".equalsIgnoreCase(user.getRole())) {
                 response.sendRedirect("TripServlet?action=list");

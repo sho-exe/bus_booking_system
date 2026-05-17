@@ -13,12 +13,11 @@
     <table class="admin-table">
         <tr>
             <th>Route</th>
-            <th>Date</th>
-            <th>Time</th>
-            <th>Bus</th>
-            <th>Driver</th>
+            <th>Departure Time</th>
+            <th>Arrival Time</th>
+            <th>Bus ID</th>
+            <th>Driver ID</th>
             <th>Price</th>
-            <th>Available Seats</th>
             <th>Actions</th>
         </tr>
 
@@ -31,18 +30,11 @@
                     <span class="stack-main"><c:out value="${trip.destination}" /></span>
                 </div>
             </td>
-            
-            <td>
-                <div class="stack">
-                    <span class="stack-main"><c:out value="${trip.departureTime}" /></span>
-                    <span class="stack-sub">to</span>
-                    <span class="stack-main"><c:out value="${trip.arrivalTime}" /></span>
-                </div>
-            </td>
+            <td><c:out value="${trip.departureTime}" /></td>
+            <td><c:out value="${trip.arrivalTime}" /></td>
             <td><c:out value="${trip.busId}" /></td>
             <td><c:out value="${trip.driverId}" /></td>
             <td>RM <c:out value="${trip.price}" /></td>
-            <td><c:out value="${trip.price}" /></td>
             <td>
                 <div class="action-btns">
                     <a href="TripServlet?action=edit&id=${trip.tripId}" class="btn-icon">

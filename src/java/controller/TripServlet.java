@@ -75,6 +75,7 @@ public class TripServlet extends HttpServlet {
             throws ServletException, IOException {
         List<Trip> listTrips = tripDAO.getAllTrips();
         request.setAttribute("trips", listTrips);
+        request.setAttribute("activeTab", "trips");
         RequestDispatcher dispatcher = request.getRequestDispatcher("admin.jsp");
         dispatcher.forward(request, response);
     }
@@ -91,6 +92,16 @@ public class TripServlet extends HttpServlet {
             throws ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
         Trip existingTrip = tripDAO.getTripById(id);
+        
+        if (existingTrip != null) {
+            if (existingTrip.getDepartureTime() != null) {
+                existingTrip.setDepartureTime(existingTrip.getDepartureTime().replace(" ", "T"));
+            }
+            if (existingTrip.getArrivalTime() != null) {
+                existingTrip.setArrivalTime(existingTrip.getArrivalTime().replace(" ", "T"));
+            }
+        }
+        
         List<Bus> busTypes = busDAO.selectAllBuses();
         
         request.setAttribute("trip", existingTrip);
@@ -106,6 +117,10 @@ public class TripServlet extends HttpServlet {
         String destination = request.getParameter("destination");
         String departureTime = request.getParameter("departureTime");
         String arrivalTime = request.getParameter("arrivalTime");
+        
+        if (departureTime != null) departureTime = departureTime.replace("T", " ");
+        if (arrivalTime != null) arrivalTime = arrivalTime.replace("T", " ");
+        
         int busId = Integer.parseInt(request.getParameter("busId"));
         double price = Double.parseDouble(request.getParameter("price"));
 
@@ -126,9 +141,12 @@ public class TripServlet extends HttpServlet {
         int id = Integer.parseInt(request.getParameter("trip_id"));
         String origin = request.getParameter("origin");
         String destination = request.getParameter("destination");
-        String tripDate = request.getParameter("tripDate");
         String departureTime = request.getParameter("departureTime");
         String arrivalTime = request.getParameter("arrivalTime");
+        
+        if (departureTime != null) departureTime = departureTime.replace("T", " ");
+        if (arrivalTime != null) arrivalTime = arrivalTime.replace("T", " ");
+        
         int busId = Integer.parseInt(request.getParameter("busId"));
         double price = Double.parseDouble(request.getParameter("price"));
 
