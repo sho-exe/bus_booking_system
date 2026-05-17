@@ -39,17 +39,7 @@
                         <div class="left-col">
                             <h2 class="section-title">Select Your Seats</h2>
 
-                            <div class="legend">
-                                <div class="legend-item">
-                                    <div class="box available"></div> Available
-                                </div>
-                                <div class="legend-item">
-                                    <div class="box selected"></div> Selected
-                                </div>
-                                <div class="legend-item">
-                                    <div class="box booked"></div> Booked
-                                </div>
-                            </div>
+
 
 
                             <!-- 
@@ -149,7 +139,19 @@
                                                             }
                                                             %>
 
-
+                                                            <h1
+                                                                style="font-size:18px; font-weight:700; color:#1a1a1a; margin-bottom:12px;">
+                                                                <% if (currentBus !=null) { %>
+                                                                    <i class="fa-solid fa-bus"
+                                                                        style="color:#cc2525;"></i>
+                                                                    <%= currentBus.getBusType() %> &nbsp;•&nbsp;
+                                                                        <%= currentBus.getBusNumber() %> &nbsp;•&nbsp;
+                                                                            Total Seats: <%= currentBus.getTotalSeats()
+                                                                                %>
+                                                                                <% } else { %>
+                                                                                    Total Seats: <%= totalSeats %>
+                                                                                        <% } %>
+                                                            </h1>
 
                                                             <div class="bus-container">
                                                                 <div class="driver-area">DRIVER</div>
@@ -182,17 +184,18 @@
                                                                     </div>
                                                                     <% }%>
                                                             </div>
+                                                            <div class="legend" style="margin-top: 10px;">
+                                                                <div class="legend-item">
+                                                                    <div class="box available"></div> Available
+                                                                </div>
+                                                                <div class="legend-item">
+                                                                    <div class="box selected"></div> Selected
+                                                                </div>
+                                                                <div class="legend-item">
+                                                                    <div class="box booked"></div> Booked
+                                                                </div>
+                                                            </div>
                         </div>
-                        <h1 style="font-size:18px; font-weight:700; color:#1a1a1a; margin-bottom:12px;">
-                            <% if (currentBus !=null) { %>
-                                <i class="fa-solid fa-bus" style="color:#cc2525;"></i>
-                                <%= currentBus.getBusType() %> &nbsp;•&nbsp;
-                                    <%= currentBus.getBusNumber() %> &nbsp;•&nbsp;
-                                        Total Seats: <%= currentBus.getTotalSeats() %>
-                                            <% } else { %>
-                                                Total Seats: <%= totalSeats %>
-                                                    <% } %>
-                        </h1>
 
                         <div class="right-col">
                             <h2 class="section-title">Booking Summary</h2>
