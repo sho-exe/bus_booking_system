@@ -18,7 +18,8 @@ body {
    HEADER
    ========================================= */
 .top-header {
-    background-color: #cc2525; /* Sani Express Red */
+    background-color: #cc2525;
+    /* Sani Express Red */
     color: white;
     padding: 15px 40px;
     display: flex;
@@ -73,7 +74,7 @@ body {
 
 .tab.active {
     background-color: white;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     font-weight: bold;
     color: #000;
 }
@@ -101,10 +102,11 @@ body {
     padding: 30px;
     border-radius: 10px;
     border: 1px solid #eaeaea;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
 }
 
-.card-title, .section-title {
+.card-title,
+.section-title {
     font-size: 16px;
     font-weight: bold;
     margin-top: 0;
@@ -171,7 +173,8 @@ body {
 }
 
 /* General Submit/Action Button */
-.btn-submit, .btn-payment {
+.btn-submit,
+.btn-payment {
     width: 100%;
     background-color: #cc2525;
     color: white;
@@ -188,7 +191,8 @@ body {
     transition: background-color 0.2s;
 }
 
-.btn-submit:hover, .btn-payment:hover {
+.btn-submit:hover,
+.btn-payment:hover {
     background-color: #b01e1e;
 }
 
@@ -239,9 +243,20 @@ body {
     height: 20px;
     border-radius: 4px;
 }
-.box.available { border: 1px solid #ccc; background: white; }
-.box.selected { background: #cc2525; }
-.box.booked { background: #d0d4d9; border: 1px solid #b8bec4;}
+
+.box.available {
+    border: 1px solid #ccc;
+    background: white;
+}
+
+.box.selected {
+    background: #cc2525;
+}
+
+.box.booked {
+    background: #d0d4d9;
+    border: 1px solid #b8bec4;
+}
 
 /* Bus Map */
 .bus-container {
@@ -272,12 +287,12 @@ body {
 }
 
 .aisle {
-    width: 40px; 
+    width: 40px;
 }
 
 /* Interactive Seats */
 .seat-checkbox {
-    display: none; 
+    display: none;
 }
 
 .seat-label {
@@ -301,13 +316,13 @@ body {
     border-color: #cc2525;
 }
 
-.seat-checkbox:checked + .seat-label {
+.seat-checkbox:checked+.seat-label {
     background-color: #cc2525;
     color: white;
     border-color: #cc2525;
 }
 
-.seat-checkbox:disabled + .seat-label {
+.seat-checkbox:disabled+.seat-label {
     background-color: #d0d4d9;
     color: #888;
     border-color: #b8bec4;
@@ -364,13 +379,13 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .trip-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     border-color: #ccc;
 }
 

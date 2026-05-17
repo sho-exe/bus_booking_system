@@ -39,7 +39,7 @@
                                 <a href="profile.jsp" class="tab"><i class="fa-regular fa-user"></i> Profile</a>
                             </div>
 
-                            <div class="search-card">
+                            <div class="search-card" style="margin-top: 20px;">
                                 <h2 class="card-title"><i class="fa-solid fa-magnifying-glass"></i> Search Bus Trips
                                 </h2>
 
@@ -155,8 +155,7 @@
                                                                 </form>
                                                             </div>
                                                         </div>
-                                                        <% } // end loop 
-                                                            } // end if %>
+                                                        <% } } %>
                         </div>
 
         </body>
