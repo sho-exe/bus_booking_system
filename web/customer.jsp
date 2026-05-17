@@ -76,14 +76,12 @@
                                                     </span>
                                                 </div>
                                             </div>
-                                            <% } } %>
 
                                 </div>
                             </div>
                 </body>
 
                 </html>
-                <%= b.getStatus() !=null ? b.getStatus() : "Pending" %>
                     </span>
                     </div>
                     </div>

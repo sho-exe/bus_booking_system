@@ -55,7 +55,7 @@ public class BusDAO {
         try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, bus.getBusNumber());
             stmt.setString(2, bus.getBusType());
-            stmt.setInt(3, bus.getTotalSeat());
+            stmt.setInt(3, bus.getTotalSeats());
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -108,7 +108,7 @@ public class BusDAO {
         try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, bus.getBusNumber());
             stmt.setString(2, bus.getBusType());
-            stmt.setInt(3, bus.getTotalSeat());
+            stmt.setInt(3, bus.getTotalSeats());
             stmt.setInt(4, bus.getBusId());
             rowUpdated = stmt.executeUpdate() > 0;
         } catch (SQLException e) {

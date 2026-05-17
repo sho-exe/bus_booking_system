@@ -130,7 +130,7 @@
 
                                                                 <p class="bus-type">
                                                                     <%= b.getBusType() %> • <%= b.getBusNumber() %> •
-                                                                            <%= b.getTotalSeat() %> Seats Total
+                                                                            <%= b.getTotalSeats() %> Seats Total
                                                                 </p>
                                                             </div>
 

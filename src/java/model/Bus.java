@@ -55,11 +55,11 @@ public class Bus {
         this.busType = busType;
     }
 
-    public int totalSeats() {
+    public int getTotalSeats() {
         return totalSeats;
     }
 
-    public void totalSeats(int totalSeats) {
+    public void setTotalSeats(int totalSeats) {
         this.totalSeats = totalSeats;
     }
 
