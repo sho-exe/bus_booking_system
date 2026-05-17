@@ -26,6 +26,7 @@ public class LoginServlet extends HttpServlet {
             session.setAttribute("userRole", user.getRole());
             session.setAttribute("email", user.getEmail());
             session.setAttribute("phoneNumber", user.getPhoneNumber());
+            session.setAttribute("passengerId", user.getId());
             
 
 

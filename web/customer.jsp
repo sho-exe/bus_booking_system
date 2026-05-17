@@ -18,46 +18,53 @@
 
                     <% String role=(String)session.getAttribute("userRole"); String
                         username=(String)session.getAttribute("username"); if(role==null || username==null){
-                        response.sendRedirect("login.html"); return; } BookingDAO bookingDAO=new BookingDAO();
-                        List<Booking> myBookings = bookingDAO.getBookingsByUser(username);
-                        %>
+                        response.sendRedirect("login.html"); return; } %>
 
-                        <div class="main-container">
+                        <% String passengerId="95" ; BookingDAO bookingDAO=new BookingDAO(); List<Booking>
+                            myBookings =
+                            bookingDAO.getBookingsByUser(passengerId);
+                            %>
 
-                            <div class="tab-nav" style="margin-top: 20px;">
-                                <a href="Booking.jsp" class="tab"><i class="fa-solid fa-magnifying-glass"></i> Book
-                                    Trip</a>
-                                <a href="customer.jsp" class="tab active"><i class="fa-solid fa-ticket"></i> My
-                                    Bookings</a>
-                                <a href="#" class="tab"><i class="fa-regular fa-user"></i> Profile</a>
-                            </div>
+                            <div class="main-container">
 
-                            <div class="results-container" style="margin-top: 30px;">
-                                <h2 class="section-title">My Bookings</h2>
+                                <div class="tab-nav" style="margin-top: 20px;">
+                                    <a href="Booking.jsp" class="tab"><i class="fa-solid fa-magnifying-glass"></i> Book
+                                        Trip</a>
+                                    <a href="customer.jsp" class="tab active"><i class="fa-solid fa-ticket"></i> My
+                                        Bookings</a>
+                                    <a href="#" class="tab"><i class="fa-regular fa-user"></i> Profile</a>
+                                </div>
 
-                                <% if (myBookings.isEmpty()) { %>
-                                    <p>You have no bookings yet. <a href="Booking.jsp">Search for a trip!</a></p>
-                                    <% } else { for(Booking b : myBookings) { %>
-                                        <div class="trip-card">
-                                            <div class="trip-info">
-                                                <h3>Booking #<%= b.getBookingId() %>
-                                                </h3>
-                                                <p class="route">Seat: <%= b.getSeatNumber() %>
-                                                </p>
-                                                <p class="bus-type">Passenger: <%= b.getPassengerName() %> (<%=
-                                                            b.getPassengerPhone() %>)</p>
-                                            </div>
-                                            <div class="trip-action">
-                                                <div class="price">RM <%= String.format("%.2f", b.getPrice()) %>
+                                <div class="results-container" style="margin-top: 30px;">
+                                    <h2 class="section-title">My Bookings</h2>
+
+                                    <h2>
+                                        <%= session.getAttribute("passengerId") %>
+                                    </h2>
+
+                                    <% if (myBookings.isEmpty()) { %>
+                                        <p>You have no bookings yet. <a href="Booking.jsp">Search for a trip!</a></p>
+                                        <% } else { for(Booking b : myBookings) { %>
+                                            <div class="trip-card">
+                                                <div class="trip-info">
+                                                    <h3>Booking #<%= b.getBookingId() %>
+                                                    </h3>
+                                                    <p class="route">Seat: <%= b.getSeat() %>
+                                                    </p>
+                                                    <p class="bus-type">Trip ID: <%= b.getTripId() %>
+                                                    </p>
+                                                    <p class="bus-type">Passenger ID: <%= b.getPassengerId() %>
+                                                    </p>
                                                 </div>
-                                                <span style="color: green; font-weight: bold;">
-                                                    <%= b.getStatus() %>
-                                                </span>
+                                                <div class="trip-action">
+                                                    <span style="color: green; font-weight: bold;">
+                                                        <%= b.getStatus() %>
+                                                    </span>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <% } } %>
+                                            <% } } %>
+                                </div>
                             </div>
-                        </div>
                 </body>
 
                 </html>

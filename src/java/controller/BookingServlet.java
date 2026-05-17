@@ -39,19 +39,19 @@ public class BookingServlet extends HttpServlet {
         String origin = request.getParameter("origin");
         String destination = request.getParameter("destination");
         String departure_date = request.getParameter("trip_date");
-        
-//        Get data from Trip Table
+
+        // Get data from Trip Table
         List<Trip> trips = new TripDAO().searchTrips(origin, destination, departure_date);
         request.setAttribute("trips", trips);
 
         List<Bus> busList = new ArrayList<>();
-//        Get data from Bus Table
+        // Get data from Bus Table
         for (Trip t : trips) {
             Bus b = new BusDAO().selectBus(t.getBusId());
             busList.add(b);
         }
         request.setAttribute("busList", busList);
-        
+
         request.getRequestDispatcher("/Booking.jsp").forward(request, response);
     }
 
@@ -64,34 +64,28 @@ public class BookingServlet extends HttpServlet {
             String[] names = request.getParameterValues("passenger_name");
             String[] phones = request.getParameterValues("passenger_phone");
             String tripIdStr = request.getParameter("trip_id");
-            
+
             if (tripIdStr != null && !tripIdStr.isEmpty() && seats != null) {
                 int tripId = Integer.parseInt(tripIdStr);
-                String priceStr = (String) request.getSession().getAttribute("price");
-                double price = priceStr != null ? Double.parseDouble(priceStr) : 0.0;
-                String username = (String) request.getSession().getAttribute("username");
-                if (username == null) username = "guest"; // fallback
-                
+                String passengerIdStr = (String) request.getSession().getAttribute("passengerId");
+                int passengerId = (passengerIdStr != null) ? Integer.parseInt(passengerIdStr) : 0;
+
                 dao.BookingDAO bookingDAO = new dao.BookingDAO();
-                
+
                 for (int i = 0; i < seats.length; i++) {
                     model.Booking b = new model.Booking();
-                    b.setSeatNumber(Integer.parseInt(seats[i]));
-                    b.setPassengerName(names[i]);
-                    b.setPassengerPhone(phones[i]);
+                    b.setSeat(Integer.parseInt(seats[i]));
                     b.setTripId(tripId);
-                    b.setPrice(price);
-                    b.setUsername(username);
-                    
-                    
+                    b.setPassengerId(passengerId);
+                    b.setStaffId(0);
+
                     bookingDAO.addBooking(b);
-                    
-                    
                 }
             }
-            
+
             response.sendRedirect("customer.jsp");
         } else {
             response.sendRedirect("Booking.jsp");
         }
-    }}
+    }
+}

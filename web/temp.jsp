@@ -35,6 +35,7 @@ booker_phone: <%= request.getParameter("booker_phone") %>
 session.setAttribute("booker_phone", request.getParameter("booker_phone"));%>
 
 
+
 === PASSENGER + BOOKING INSERT RESULT ===
 <%
     String[] seats = request.getParameterValues("seat_number");
@@ -55,7 +56,7 @@ session.setAttribute("booker_phone", request.getParameter("booker_phone"));%>
             conn.setAutoCommit(false);
 
             String insertPassengerSql = "INSERT INTO Passenger (name, age) VALUES (?, ?)";
-            String insertBookingSql   = "INSERT INTO Booking (passenger_id, trip_id, seat) VALUES (?, ?, ?)";
+            String insertBookingSql   = "INSERT INTO Booking (passenger_id, trip_id, seat, user_id) VALUES (?, ?, ?, ?)";
 
             PreparedStatement passengerStmt = conn.prepareStatement(insertPassengerSql, Statement.RETURN_GENERATED_KEYS);
             PreparedStatement bookingStmt   = conn.prepareStatement(insertBookingSql);
@@ -82,6 +83,8 @@ session.setAttribute("booker_phone", request.getParameter("booker_phone"));%>
                         bookingStmt.setInt(1, passengerId);
                         bookingStmt.setInt(2, tripId);
                         bookingStmt.setInt(3, Integer.parseInt(seat));
+                        bookingStmt.setInt(4, Integer.parseInt((String)session.getAttribute("passengerId")));
+
                         bookingStmt.executeUpdate();
                         out.println("Booking INSERT OK — trip_id: " + tripId + ", seat: " + seat);
                     } else {
@@ -116,7 +119,7 @@ session.setAttribute("booker_phone", request.getParameter("booker_phone"));%>
 
         <%-- Redirect only after all output is done --%>
         <% if (insertSuccess) { %>
-            <script>window.location.href = "createPayment.jsp";</script>
+            <!--<script>window.location.href = "createPayment.jsp";</script>-->
         <% } %>
     </body>
 </html>

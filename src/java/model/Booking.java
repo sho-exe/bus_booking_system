@@ -10,26 +10,23 @@ public class Booking {
     private int bookingId;
     private Timestamp bookingDate;
     private String status;
-    private String passengerName;
-    private String passengerPhone;
+    private int passengerId;
     private int tripId;
-    private int seatNumber;
-    private String username;
-    private double price;
+    private int userId;
+
+    private int seat;
 
     public Booking() {}
 
-    public Booking(int bookingId, Timestamp bookingDate, String status, String passengerName, 
-                   String passengerPhone, int tripId, int seatNumber, String username, double price) {
-        this.bookingId = bookingId;
+    public Booking(int bookingId, Timestamp bookingDate, String status,
+                   int passengerId, int tripId, int userId, int seat) {
+        this.bookingId   = bookingId;
         this.bookingDate = bookingDate;
-        this.status = status;
-        this.passengerName = passengerName;
-        this.passengerPhone = passengerPhone;
-        this.tripId = tripId;
-        this.seatNumber = seatNumber;
-        this.username = username;
-        this.price = price;
+        this.status      = status;
+        this.passengerId = passengerId;
+        this.tripId      = tripId;
+        this.userId     = userId;
+        this.seat        = seat;
     }
 
     // Getters and Setters
@@ -42,21 +39,15 @@ public class Booking {
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
 
-    public String getPassengerName() { return passengerName; }
-    public void setPassengerName(String passengerName) { this.passengerName = passengerName; }
-
-    public String getPassengerPhone() { return passengerPhone; }
-    public void setPassengerPhone(String passengerPhone) { this.passengerPhone = passengerPhone; }
+    public int getPassengerId() { return passengerId; }
+    public void setPassengerId(int passengerId) { this.passengerId = passengerId; }
 
     public int getTripId() { return tripId; }
     public void setTripId(int tripId) { this.tripId = tripId; }
 
-    public int getSeatNumber() { return seatNumber; }
-    public void setSeatNumber(int seatNumber) { this.seatNumber = seatNumber; }
+    public int getUserId() { return userId; }
+    public void setUserId(int staffId) { this.userId = staffId; }
 
-    public String getUsername() { return username; }
-    public void setUsername(String username) { this.username = username; }
-    
-    public double getPrice() { return price; }
-    public void setPrice(double price) { this.price = price; }
+    public int getSeat() { return seat; }
+    public void setSeat(int seat) { this.seat = seat; }
 }
