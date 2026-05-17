@@ -24,11 +24,11 @@
 
         <jsp:include page="header.jsp" />
 
-        
+<!--        
         <h1><%=session.getAttribute("username")%></h1>
                 <h1><%=session.getAttribute("email")%></h1>
         <h1><%=session.getAttribute("phoneNumber")%></h1>
-         <h1><%=session.getAttribute("passengerId")%></h1>
+         <h1><%=session.getAttribute("passengerId")%></h1>-->
 
 
         <div class="main-container">
