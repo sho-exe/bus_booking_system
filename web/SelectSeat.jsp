@@ -185,7 +185,7 @@
 
                         
                         <div class="summary-row bold">
-                            <span>Route:</span>
+                            <span>Trip ID:</span>
                             <span><%=session.getAttribute("trip_id")%></span>
                         </div>
                         <div class="summary-row bold">
@@ -209,7 +209,7 @@
                         </div>
                         <div class="summary-row">
                             <span>Price per seat:</span>
-                            <span>RM<%=session.getAttribute("price")%>.00</span>
+                            <span>RM<%=session.getAttribute("price")%>0</span>
                         </div>
 
                         <div class="divider"></div>

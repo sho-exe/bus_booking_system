@@ -119,7 +119,7 @@ session.setAttribute("booker_phone", request.getParameter("booker_phone"));%>
 
         <%-- Redirect only after all output is done --%>
         <% if (insertSuccess) { %>
-            <!--<script>window.location.href = "createPayment.jsp";</script>-->
+            <script>window.location.href = "createPayment.jsp";</script>
         <% } %>
     </body>
 </html>

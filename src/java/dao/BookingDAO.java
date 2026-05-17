@@ -49,12 +49,12 @@ public class BookingDAO {
 
     public List<Integer> getBookedSeatsByTrip(int tripId) {
         List<Integer> bookedSeats = new ArrayList<>();
-        String sql = "SELECT seat_number FROM booking WHERE trip_id = ? AND status = 'Confirmed'";
+        String sql = "SELECT seat FROM Booking WHERE trip_id = ? AND status = 'Pending'";
         try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, tripId);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                bookedSeats.add(rs.getInt("seat_number"));
+                bookedSeats.add(rs.getInt("seat"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
