@@ -37,7 +37,7 @@
                     <%= bus.getBusType() %>
                 </span>
             </td>
-            <td><%= bus.getTotalSeat() %></td>
+            <td><%= bus.getTotalSeats() %></td>
             <td>
                 <div class="action-btns">
                     <a href="BusServlet?action=edit&busID=<%= bus.getBusId() %>" class="btn-icon">

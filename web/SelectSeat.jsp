@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<!DOCTYPE html>
-<html lang="en">
+    <!DOCTYPE html>
+    <html lang="en">
+
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,54 +10,49 @@
         <link rel="stylesheet" href="style.css">
 
     </head>
+
     <body>
 
-        <%
-            String trip_id = (String) session.getAttribute("trip_id");
-            String origin = request.getParameter("origin");
-            String destination = request.getParameter("destination");
-            String trip_date = request.getParameter("trip_date");
-            String price = request.getParameter("price");
+        <% String trip_id=(String) session.getAttribute("trip_id"); String origin=request.getParameter("origin"); String
+            destination=request.getParameter("destination"); String trip_date=request.getParameter("trip_date"); String
+            price=request.getParameter("price"); if (origin !=null) { session.setAttribute("origin", origin);
+            session.setAttribute("destination", destination); session.setAttribute("trip_date", trip_date);
+            session.setAttribute("price", price); } %>
+            <jsp:include page="header.jsp" />
 
-            if (origin != null) {
+            <div class="main-container">
 
-                session.setAttribute("origin", origin);
-                session.setAttribute("destination", destination);
-                session.setAttribute("trip_date", trip_date);
-                session.setAttribute("price", price);
+                <div class="tab-nav">
+                    <a href="Booking.jsp" class="tab active"><i class="fa-solid fa-magnifying-glass"></i> Book Trip</a>
+                    <a href="customer.jsp" class="tab"><i class="fa-solid fa-ticket"></i> My Bookings</a>
+                    <a href="profile.jsp" class="tab"><i class="fa-regular fa-user"></i> Profile</a>
+                </div>
 
-            }
+                <br>
+                <a href="booking" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Back to Search</a>
 
-        %>
-        <jsp:include page="header.jsp" />
+                <form action="PassengerDetails.jsp" method="POST">
 
-        <div class="main-container">
+                    <!--<form action="temp.jsp" method="POST">-->
+                    <div class="layout-grid">
 
-            <div class="tab-nav">
-                <a href="Booking.jsp" class="tab active"><i class="fa-solid fa-magnifying-glass"></i> Book Trip</a>
-                <a href="customer.jsp" class="tab"><i class="fa-solid fa-ticket"></i> My Bookings</a>
-                <a href="profile.jsp" class="tab"><i class="fa-regular fa-user"></i> Profile</a>
-            </div>
+                        <div class="left-col">
+                            <h2 class="section-title">Select Your Seats</h2>
 
-            <br>
-            <a href="booking" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Back to Search</a>
-
-                        <form action="PassengerDetails.jsp" method="POST">
-
-            <!--<form action="temp.jsp" method="POST">-->
-                <div class="layout-grid">
-
-                    <div class="left-col">
-                        <h2 class="section-title">Select Your Seats</h2>
-
-                        <div class="legend">
-                            <div class="legend-item"><div class="box available"></div> Available</div>
-                            <div class="legend-item"><div class="box selected"></div> Selected</div>
-                            <div class="legend-item"><div class="box booked"></div> Booked</div>
-                        </div>
+                            <div class="legend">
+                                <div class="legend-item">
+                                    <div class="box available"></div> Available
+                                </div>
+                                <div class="legend-item">
+                                    <div class="box selected"></div> Selected
+                                </div>
+                                <div class="legend-item">
+                                    <div class="box booked"></div> Booked
+                                </div>
+                            </div>
 
 
-                        <!-- 
+                            <!-- 
                         <div class="bus-container">
                             <div class="driver-area">DRIVER</div>
 
@@ -128,131 +124,158 @@
                         
                         -->
 
-                        <%@ page import="java.util.List" %>
-                        <%@ page import="dao.BookingDAO" %>
-                        <%                            
-                            String tripIdStr = request.getParameter("trip_id");
-                            if (tripIdStr != null) {
-                                session.setAttribute("trip_id", tripIdStr);
-                            } else {
-                                tripIdStr = (String) session.getAttribute("trip_id");
-                            }
+                            <%@ page import="java.util.List" %>
+                                <%@ page import="dao.BookingDAO" %>
+                                    <%@ page import="dao.BusDAO" %>
+                                        <%@ page import="model.Bus" %>
+                                            <% String tripIdStr=request.getParameter("trip_id"); if (tripIdStr !=null) {
+                                                session.setAttribute("trip_id", tripIdStr); } else { tripIdStr=(String)
+                                                session.getAttribute("trip_id"); } String
+                                                busIdStr=request.getParameter("bus_id"); if (busIdStr !=null) {
+                                                session.setAttribute("bus_id", busIdStr); } else { busIdStr=(String)
+                                                session.getAttribute("bus_id"); } int totalSeats=30; Bus
+                                                currentBus=null; if (busIdStr !=null && !busIdStr.isEmpty()) {
+                                                currentBus=new BusDAO().selectBus(Integer.parseInt(busIdStr)); if
+                                                (currentBus !=null) { totalSeats=currentBus.getTotalSeats(); } }
+                                                List<Integer> bookedList = new java.util.ArrayList<>();
+                                                    if (tripIdStr != null && !tripIdStr.isEmpty()) {
+                                                    int tripId = Integer.parseInt(tripIdStr);
+                                                    bookedList = new BookingDAO().getBookedSeatsByTrip(tripId);
+                                                    }
 
-                            int totalSeats = 31;
-                            List<Integer> bookedList = new java.util.ArrayList<>();
-                            if (tripIdStr != null && !tripIdStr.isEmpty()) {
-                                int tripId = Integer.parseInt(tripIdStr);
-                                bookedList = new BookingDAO().getBookedSeatsByTrip(tripId);
-                            }
-                            
-                            java.util.Set<String> bookedSet = new java.util.HashSet<>();
-                            for(Integer seat : bookedList) {
-                                bookedSet.add(String.valueOf(seat));
-                            }
-                        %>
+                                                    java.util.Set<String> bookedSet = new java.util.HashSet<>();
+                                                            for (Integer seat : bookedList) {
+                                                            bookedSet.add(String.valueOf(seat));
+                                                            }
+                                                            %>
 
-                        <div class="bus-container">
-                            <div class="driver-area">DRIVER</div>
 
-                            <%
-                                for (int i = 1; i <= totalSeats; i += 4) {
-                                    int[] rowSeats = {i, i + 1, i + 2, i + 3};
-                            %>
-                            <div class="seat-row">
-                                <%
-                                    for (int j = 0; j < 4; j++) {
-                                        int seatNum = rowSeats[j];
-                                        boolean isBooked = bookedSet.contains(String.valueOf(seatNum));
-                                        String disabledAttr = isBooked ? "disabled" : "";
-                                %>
 
-                                <% if (j == 2) { %>
-                                <div class="aisle"></div>
-                                <% }%>
+                                                            <div class="bus-container">
+                                                                <div class="driver-area">DRIVER</div>
 
-                                <input type="checkbox" id="seat-<%=seatNum%>" name="selected_seats"
-                                       value="<%=seatNum%>" class="seat-checkbox" <%=disabledAttr%>>
-                                <label for="seat-<%=seatNum%>" class="seat-label"><%=seatNum%></label>
+                                                                <% for (int i=1; i <=totalSeats; i +=4) { int[]
+                                                                    rowSeats={i, i + 1, i + 2, i + 3}; %>
+                                                                    <div class="seat-row">
+                                                                        <% for (int j=0; j < 4; j++) { int
+                                                                            seatNum=rowSeats[j]; boolean
+                                                                            isBooked=bookedSet.contains(String.valueOf(seatNum));
+                                                                            String disabledAttr=isBooked ? "disabled"
+                                                                            : "" ; %>
 
-                                <% } %>
+                                                                            <% if (j==2) { %>
+                                                                                <div class="aisle"></div>
+                                                                                <% }%>
+
+                                                                                    <input type="checkbox"
+                                                                                        id="seat-<%=seatNum%>"
+                                                                                        name="selected_seats"
+                                                                                        value="<%=seatNum%>"
+                                                                                        class="seat-checkbox"
+                                                                                        <%=disabledAttr%>>
+                                                                                    <label for="seat-<%=seatNum%>"
+                                                                                        class="seat-label">
+                                                                                        <%=seatNum%>
+                                                                                    </label>
+
+                                                                                    <% } %>
+                                                                    </div>
+                                                                    <% }%>
+                                                            </div>
+                        </div>
+                        <h1 style="font-size:18px; font-weight:700; color:#1a1a1a; margin-bottom:12px;">
+                            <% if (currentBus !=null) { %>
+                                <i class="fa-solid fa-bus" style="color:#cc2525;"></i>
+                                <%= currentBus.getBusType() %> &nbsp;•&nbsp;
+                                    <%= currentBus.getBusNumber() %> &nbsp;•&nbsp;
+                                        Total Seats: <%= currentBus.getTotalSeats() %>
+                                            <% } else { %>
+                                                Total Seats: <%= totalSeats %>
+                                                    <% } %>
+                        </h1>
+
+                        <div class="right-col">
+                            <h2 class="section-title">Booking Summary</h2>
+
+
+                            <div class="summary-row bold">
+                                <span>Trip ID:</span>
+                                <span>
+                                    <%=session.getAttribute("trip_id")%>
+                                </span>
                             </div>
-                            <% }%>
+                            <div class="summary-row bold">
+                                <span>Route:</span>
+                                <span>
+                                    <%=session.getAttribute("origin")%> &rarr; <%=session.getAttribute("destination")%>
+                                </span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Date:</span>
+                                <span>
+                                    <%= session.getAttribute("trip_date")%>
+                                </span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Departure:</span>
+                                <span>09:00</span>
+                            </div>
+
+                            <div class="divider"></div>
+
+                            <div class="summary-row">
+                                <span>Selected Seats:</span>
+                                <span id="seat-count">1</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Price per seat:</span>
+                                <span>RM<%=session.getAttribute("price")%>0</span>
+                            </div>
+
+                            <div class="divider"></div>
+
+                            <div class="total-row">
+                                <span>Total:</span>
+                                <span class="total-price" id="total-price">RM<%=session.getAttribute("price")%>
+                                        .00</span>
+                            </div>
+
+                            <button type="submit" class="btn-payment" onclick="alertSeats()">Fill Passengers
+                                Details</button>
                         </div>
+
                     </div>
+                </form>
 
-                    <div class="right-col">
-                        <h2 class="section-title">Booking Summary</h2>
+            </div>
 
-                        
-                        <div class="summary-row bold">
-                            <span>Trip ID:</span>
-                            <span><%=session.getAttribute("trip_id")%></span>
-                        </div>
-                        <div class="summary-row bold">
-                            <span>Route:</span>
-                            <span><%=session.getAttribute("origin")%> &rarr; <%=session.getAttribute("destination")%></span>
-                        </div>
-                        <div class="summary-row">
-                            <span>Date:</span>
-                            <span><%= session.getAttribute("trip_date")%></span>
-                        </div>
-                        <div class="summary-row">
-                            <span>Departure:</span>
-                            <span>09:00</span>
-                        </div>
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const pricePerSeat = <%= session.getAttribute("price") %>;
 
-                        <div class="divider"></div>
+                    const seatCountDisplay = document.getElementById('seat-count');
+                    const totalPriceDisplay = document.getElementById('total-price');
 
-                        <div class="summary-row">
-                            <span>Selected Seats:</span>
-                            <span id="seat-count">1</span>
-                        </div>
-                        <div class="summary-row">
-                            <span>Price per seat:</span>
-                            <span>RM<%=session.getAttribute("price")%>0</span>
-                        </div>
+                    const seatCheckboxes = document.querySelectorAll('.seat-checkbox:not([disabled])');
 
-                        <div class="divider"></div>
+                    function updateTotals() {
+                        const selectedSeats = document.querySelectorAll('.seat-checkbox:checked');
+                        const count = selectedSeats.length;
 
-                        <div class="total-row">
-                            <span>Total:</span>
-                            <span class="total-price" id="total-price">RM<%=session.getAttribute("price")%>.00</span>
-                        </div>
+                        const total = count * pricePerSeat;
 
-                        <button type="submit" class="btn-payment" onclick="alertSeats()">Fill Passengers Details</button>
-                    </div>
+                        seatCountDisplay.textContent = count;
+                        totalPriceDisplay.textContent = 'RM ' + total.toFixed(2);
+                    }
 
-                </div>
-            </form>
+                    seatCheckboxes.forEach(function (checkbox) {
+                        checkbox.addEventListener('change', updateTotals);
+                    });
 
-        </div>
-
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                const pricePerSeat = <%= session.getAttribute("price")%>;
-
-                const seatCountDisplay = document.getElementById('seat-count');
-                const totalPriceDisplay = document.getElementById('total-price');
-
-                const seatCheckboxes = document.querySelectorAll('.seat-checkbox:not([disabled])');
-
-                function updateTotals() {
-                    const selectedSeats = document.querySelectorAll('.seat-checkbox:checked');
-                    const count = selectedSeats.length;
-
-                    const total = count * pricePerSeat;
-
-                    seatCountDisplay.textContent = count;
-                    totalPriceDisplay.textContent = 'RM ' + total.toFixed(2);
-                }
-
-                seatCheckboxes.forEach(function (checkbox) {
-                    checkbox.addEventListener('change', updateTotals);
+                    updateTotals();
                 });
 
-                updateTotals();
-            });
-
-        </script>
+            </script>
     </body>
-</html>
+
+    </html>
