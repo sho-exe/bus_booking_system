@@ -12,59 +12,55 @@ public class Bus {
     private int busID;
     private String busNumber;
     private String busType;
-    private int totalSeat;
-    
-    public Bus(){
-        
+    private int totalSeats;
+
+    public Bus() {
+
     }
-    
-    
-    public Bus(int busID, String busNumber, String busType, int totalSeat){
+
+    public Bus(int busID, String busNumber, String busType, int totalSeats) {
         this.busID = busID;
         this.busNumber = busNumber;
         this.busType = busType;
-        this.totalSeat = totalSeat;
+        this.totalSeats = totalSeats;
     }
-    
-    public Bus(String busNumber, String busType, int totalSeat){
+
+    public Bus(String busNumber, String busType, int totalSeats) {
         this.busNumber = busNumber;
         this.busType = busType;
-        this.totalSeat = totalSeat;
+        this.totalSeats = totalSeats;
     }
-    
-    
-    public int getBusId(){
+
+    public int getBusId() {
         return busID;
     }
-    
-    public void setBusId(int busID){
+
+    public void setBusId(int busID) {
         this.busID = busID;
     }
-    
-    public String getBusNumber(){
+
+    public String getBusNumber() {
         return busNumber;
     }
-    
-    public void setBusNumber(String busNumber){
+
+    public void setBusNumber(String busNumber) {
         this.busNumber = busNumber;
     }
-    
-    public String getBusType(){
+
+    public String getBusType() {
         return busType;
     }
-    
-    public void setBusType(String busType){
+
+    public void setBusType(String busType) {
         this.busType = busType;
     }
-    
-    public int getTotalSeat(){
-        return totalSeat;
-    }
-    
-    public void setTotalSeat(int totalSeat){
-        this.totalSeat = totalSeat;
-    }
-    
-  
-}
 
+    public int totalSeats() {
+        return totalSeats;
+    }
+
+    public void totalSeats(int totalSeats) {
+        this.totalSeats = totalSeats;
+    }
+
+}

@@ -38,14 +38,12 @@
                                 <div class="results-container">
 
                                     <% if (myBookings.isEmpty()) { %>
-                                    
                                         <div class="trip-card"
                                             style="justify-content: center; padding: 40px; text-align: center; flex-direction: column; gap: 10px;">
-                                            
                                             <i class="fa-solid fa-ticket-simple"
                                                 style="font-size: 40px; color: #ddd;"></i>
                                             <p style="color: #999; margin: 0;">You have no bookings yet. <a
-                                                    href="Booking.jsp" style="color: #cc2525; font-weight: 600;"><br>Search
+                                                    href="Booking.jsp" style="color: #cc2525; font-weight: 600;">Search
                                                     for a trip</a></p>
                                         </div>
 
@@ -55,8 +53,6 @@
                                             statusClass="status-confirmed" ; statusIcon="fa-circle-check" ; } else if
                                             ("Cancelled".equalsIgnoreCase(b.getStatus())) {
                                             statusClass="status-cancelled" ; statusIcon="fa-circle-xmark" ; } %>
-                                            
-                                            
                                             <div class="trip-card">
                                                 <div class="trip-info">
                                                     <h3>Booking #<%= b.getBookingId() %>
@@ -87,3 +83,14 @@
                 </body>
 
                 </html>
+                <%= b.getStatus() !=null ? b.getStatus() : "Pending" %>
+                    </span>
+                    </div>
+                    </div>
+                    <% } } %>
+
+                        </div>
+                        </div>
+                        </body>
+
+                        </html>
