@@ -1,18 +1,16 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="java.io.*"%>
 <%@page import="java.net.*"%>
-
+<%@page import="dao.BookingDAO"%>
+<%@page import="model.Booking"%>
 <%
     // ToyyibPay API Details (Provided by user's Payment module)
     String secretKey = "18v1vjgx-wk1v-6vvm-9dob-a0vi50we9sp3";
     String categoryCode = "2mnt69lt";
-
     
-    String buyerName = (String) session.getAttribute("username");
-    String buyerEmail = (String) session.getAttribute("email");
-    String buyerPhone = (String) session.getAttribute("phoneNumber");
-    
-    
+    String passenger_name = request.getParameter("passenger_name");
+    BookingDAO dao = new BookingDAO();
+//    Booking booking = dao.getBookingsByUser(passenger_name);
     
     
 String totalPrice = String.valueOf(session.getAttribute("total_price"));
