@@ -1,6 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="dao.PaymentDAO"%>
 <%@page import="model.Payment"%>
+<%@ page import="java.sql.SQLException" %>
 
 <%
     String statusId = request.getParameter("status_id");
@@ -35,9 +36,9 @@
         if (saved) {
             out.println("Payment recorded successfully.");
         } else {
-            out.println("Payment insert returned false — check DAO.");
+//            out.println("Payment insert returned false — check DAO.");
         }
-    } catch (Exception e) {
+    } catch (SQLException e) {
         out.println("Payment INSERT FAILED: " + e.getMessage());
         e.printStackTrace();
     }
@@ -66,7 +67,7 @@
             <p style="color: #6b7280; margin-bottom: 30px;">Your transaction was completed successfully. Your reference number is <strong><%= referenceNo%></strong>.</p>
 
             <!-- Automatically submit the booking details to the servlet -->
-            <form id="insertBookingForm" action="booking?action=insert" method="POST">
+            <!--<form id="insertBookingForm" action="booking?action=insert" method="POST">-->
                 <%
                     String[] names = (String[]) session.getAttribute("checkout_names");
                     String[] phones = (String[]) session.getAttribute("checkout_phones");
@@ -84,7 +85,9 @@
                 %>
                 <input type="hidden" name="trip_id" value="<%= tripIdStr%>">
 
-                <button type="submit" class="btn-payment">Finalize Booking & View Tickets</button>
+                 <a href="customer.jsp" class="btn-payment">View Tickets</a>
+
+                <!--<button type="submit" class="btn-payment">View Tickets</button>-->
             </form>
 
             <script>
