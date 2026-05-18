@@ -93,6 +93,14 @@
                                                     value="<%= (trip_date != null) ? trip_date : ""%>" required>
                                             </div>
                                         </div>
+                                            
+                                             <div class="form-group">
+                                            <label>Returning Date (Optional)</label>
+                                            <div class="input-wrapper">
+                                                <i class="fa-regular fa-calendar"></i>
+                                                <input type="date" name="return_date" class="form-control">
+                                            </div>
+                                        </div>
 
                                     </div>
 
