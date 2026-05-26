@@ -70,7 +70,7 @@
                     <option value="">-- Select Bus --</option>
                     <c:forEach var="bus" items="${busTypes}">
                         <option value="${bus.busId}" <c:if test="${bus.busId == trip.busId}">selected</c:if>>
-                            ${bus.busNumber} (${bus.busType} - ${bus.totalSeat} Seats)
+                            ${bus.busNumber} (${bus.busType} - ${bus.totalSeats} Seats)
                         </option>
                     </c:forEach>
                 </select>

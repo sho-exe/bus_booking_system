@@ -67,8 +67,8 @@ public class BookingServlet extends HttpServlet {
 
             if (tripIdStr != null && !tripIdStr.isEmpty() && seats != null) {
                 int tripId = Integer.parseInt(tripIdStr);
-                String passengerIdStr = (String) request.getSession().getAttribute("passengerId");
-                int passengerId = (passengerIdStr != null) ? Integer.parseInt(passengerIdStr) : 0;
+                String userIdStr = (String) request.getSession().getAttribute("passengerId");
+                int userId = (userIdStr != null) ? Integer.parseInt(userIdStr) : 0;
 
                 dao.BookingDAO bookingDAO = new dao.BookingDAO();
 
@@ -76,8 +76,13 @@ public class BookingServlet extends HttpServlet {
                     model.Booking b = new model.Booking();
                     b.setSeat(Integer.parseInt(seats[i]));
                     b.setTripId(tripId);
-                    b.setPassengerId(passengerId);
-                    b.setUserId(0);
+
+                   // b.setPassengerId(passengerId);
+                   // b.setUserId(0);
+
+                    b.setPassengerId(userId); // passenger_id = logged-in user id
+                    b.setUserId(userId); // user_id = logged-in user id
+
 
                     bookingDAO.addBooking(b);
                 }

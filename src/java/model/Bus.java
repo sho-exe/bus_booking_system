@@ -13,33 +13,37 @@ public class Bus {
     private int busID;
     private String busNumber;
     private String busType;
-    private int totalSeat;
+    private int totalSeats;
     private String roadtax;
     private String insurance;
     private String expiryDate;
+   
+
 
     public Bus() {
 
     }
 
-    public Bus(int busID, String busNumber, String busType, int totalSeat, String roadtax, String insurance, String expiryDate) {
+
+    public Bus(int busID, String busNumber, String busType, int totalSeats, String roadtax, String insurance, String expiryDate) {
         this.busID = busID;
         this.busNumber = busNumber;
         this.busType = busType;
-        this.totalSeat = totalSeat;
+        this.totalSeats = totalSeats;
         this.roadtax = roadtax;
         this.insurance = insurance;
         this.expiryDate = expiryDate;
     }
 
-    public Bus(String busNumber, String busType, int totalSeat, String roadtax, String insurance, String expiryDate) {
+    public Bus(String busNumber, String busType, int totalSeats, String roadtax, String insurance, String expiryDate) {
         this.busNumber = busNumber;
         this.busType = busType;
-        this.totalSeat = totalSeat;
+        this.totalSeats = totalSeats;
         this.roadtax = roadtax;
         this.insurance = insurance;
         this.expiryDate = expiryDate;
     }
+  
 
     public int getBusId() {
         return busID;
@@ -65,12 +69,13 @@ public class Bus {
         this.busType = busType;
     }
 
-    public int getTotalSeat() {
-        return totalSeat;
+
+    public int getTotalSeats() {
+        return totalSeats;
     }
 
     public void setTotalSeat(int totalSeat) {
-        this.totalSeat = totalSeat;
+        this.totalSeats = totalSeat;
     }
 
     public String getRoadtax() {
@@ -95,6 +100,8 @@ public class Bus {
 
     public void setExpiryDate(String expiryDate) {
         this.expiryDate = expiryDate;
+
+
     }
 
 }

@@ -40,12 +40,15 @@
                     <%= bus.getBusType()%>
                 </span>
             </td>
-            <td><%= bus.getTotalSeat()%></td>
+            <td><%= bus.getTotalSeats()%></td>
 
             <td><%= bus.getRoadtax() != null ? bus.getRoadtax() : "N/A"%></td>
             <td><%= bus.getInsurance() != null ? bus.getInsurance() : "N/A"%></td>
             <td><%= bus.getExpiryDate() != null ? bus.getExpiryDate() : "N/A"%></td>
 
+
+
+            
 
             <td>
                 <div class="action-btns">

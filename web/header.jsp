@@ -36,6 +36,6 @@
         
         <p>Welcome, ${username} </p> </div>
     <div class="header-actions">
-        <button class="header-action-btn" style="font-weight:bold">LOG OUT</button>
+        <a style="text-decoration: none; color: black; font-weight: bold" href="login.html" class="header-action-btn" style="font-weight:bold">LOG OUT</a>
     </div>
 </header>

@@ -49,12 +49,12 @@ public class BookingDAO {
 
     public List<Integer> getBookedSeatsByTrip(int tripId) {
         List<Integer> bookedSeats = new ArrayList<>();
-        String sql = "SELECT seat_number FROM booking WHERE trip_id = ? AND status = 'Confirmed'";
+        String sql = "SELECT seat FROM Booking WHERE trip_id = ? AND status = 'Confirmed'";
         try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, tripId);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                bookedSeats.add(rs.getInt("seat_number"));
+                bookedSeats.add(rs.getInt("seat"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -62,11 +62,11 @@ public class BookingDAO {
         return bookedSeats;
     }
 
-    public List<Booking> getBookingsByUser(String passengerId) {
+    public List<Booking> getBookingsByUser(String userId) {
         List<Booking> bookings = new ArrayList<>();
-        String sql = "SELECT booking_id, booking_date, status, passenger_id, trip_id, staff_id, seat FROM Booking WHERE passenger_id = ?";
+        String sql = "SELECT booking_id, booking_date, status, passenger_id, trip_id, user_id, seat FROM Booking WHERE user_id = ?";
         try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, passengerId);
+            stmt.setString(1, userId);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 Booking b = new Booking(
@@ -75,7 +75,7 @@ public class BookingDAO {
                         rs.getString("status"),
                         rs.getInt("passenger_id"),
                         rs.getInt("trip_id"),
-                        rs.getInt("staff_id"),
+                        rs.getInt("user_id"),
                         rs.getInt("seat"));
                 bookings.add(b);
             }

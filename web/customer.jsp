@@ -3,11 +3,11 @@
         <%@page import="dao.BookingDAO" %>
             <%@page contentType="text/html" pageEncoding="UTF-8" %>
                 <!DOCTYPE html>
-                <html>
+                <html lang="en">
 
                 <head>
                     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-                    <title>Customer Dashboard - Sani Express</title>
+                    <title>My Bookings - Sani Express</title>
                     <link rel="stylesheet"
                         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
                     <link rel="stylesheet" href="style.css" />
@@ -16,13 +16,13 @@
                 <body>
                     <jsp:include page="header.jsp" />
 
-                    <% String role=(String)session.getAttribute("userRole"); String
-                        username=(String)session.getAttribute("username"); if(role==null || username==null){
-                        response.sendRedirect("login.html"); return; } %>
-
-                        <% String passengerId="95" ; BookingDAO bookingDAO=new BookingDAO(); List<Booking>
-                            myBookings =
-                            bookingDAO.getBookingsByUser(passengerId);
+                    <% String role=(String) session.getAttribute("userRole"); String username=(String)
+                        session.getAttribute("username"); if (role==null || username==null) {
+                        response.sendRedirect("login.html"); return; } String userId=(String)
+                        session.getAttribute("passengerId"); BookingDAO bookingDAO=new BookingDAO(); List<Booking>
+                        myBookings = (userId != null)
+                        ? bookingDAO.getBookingsByUser(userId)
+                        : new java.util.ArrayList<>();
                             %>
 
                             <div class="main-container">
@@ -32,39 +32,63 @@
                                         Trip</a>
                                     <a href="customer.jsp" class="tab active"><i class="fa-solid fa-ticket"></i> My
                                         Bookings</a>
-                                    <a href="#" class="tab"><i class="fa-regular fa-user"></i> Profile</a>
+                                    <a href="profile.jsp" class="tab"><i class="fa-regular fa-user"></i> Profile</a>
                                 </div>
 
-                                <div class="results-container" style="margin-top: 30px;">
-                                    <h2 class="section-title">My Bookings</h2>
-
-                                    <h2>
-                                        <%= session.getAttribute("passengerId") %>
-                                    </h2>
+                                <div class="results-container">
 
                                     <% if (myBookings.isEmpty()) { %>
-                                        <p>You have no bookings yet. <a href="Booking.jsp">Search for a trip!</a></p>
-                                        <% } else { for(Booking b : myBookings) { %>
+                                        <div class="trip-card"
+                                            style="justify-content: center; padding: 40px; text-align: center; flex-direction: column; gap: 10px;">
+                                            <i class="fa-solid fa-ticket-simple"
+                                                style="font-size: 40px; color: #ddd;"></i>
+                                            <p style="color: #999; margin: 0;">You have no bookings yet. <a
+                                                    href="Booking.jsp" style="color: #cc2525; font-weight: 600;">Search
+                                                    for a trip</a></p>
+                                        </div>
+
+                                        <% } else { for (Booking b : myBookings) { String statusClass="status-pending" ;
+                                            String statusIcon="fa-clock" ; if
+                                            ("Confirmed".equalsIgnoreCase(b.getStatus())) {
+                                            statusClass="status-confirmed" ; statusIcon="fa-circle-check" ; } else if
+                                            ("Cancelled".equalsIgnoreCase(b.getStatus())) {
+                                            statusClass="status-cancelled" ; statusIcon="fa-circle-xmark" ; } %>
                                             <div class="trip-card">
                                                 <div class="trip-info">
                                                     <h3>Booking #<%= b.getBookingId() %>
                                                     </h3>
-                                                    <p class="route">Seat: <%= b.getSeat() %>
+                                                    <p class="route">
+                                                        <i class="fa-solid fa-chair"></i> Seat <%= b.getSeat() %>
+                                                            &nbsp;&bull;&nbsp;
+                                                            <i class="fa-solid fa-route"></i> Trip #<%= b.getTripId() %>
                                                     </p>
-                                                    <p class="bus-type">Trip ID: <%= b.getTripId() %>
-                                                    </p>
-                                                    <p class="bus-type">Passenger ID: <%= b.getPassengerId() %>
+                                                    <p class="bus-type">
+                                                        <% if (b.getBookingDate() !=null) { %>
+                                                            <i class="fa-regular fa-calendar"></i>
+                                                            <%= b.getBookingDate().toString().substring(0, 10) %>
+                                                                <% } %>
                                                     </p>
                                                 </div>
                                                 <div class="trip-action">
-                                                    <span style="color: green; font-weight: bold;">
-                                                        <%= b.getStatus() %>
+                                                    <span class="status-badge <%= statusClass %>">
+                                                        <i class="fa-solid <%= statusIcon %>"></i>
+                                                        <%= b.getStatus() !=null ? b.getStatus() : "Pending" %>
                                                     </span>
                                                 </div>
                                             </div>
-                                            <% } } %>
+
                                 </div>
                             </div>
                 </body>
 
                 </html>
+                    </span>
+                    </div>
+                    </div>
+                    <% } } %>
+
+                        </div>
+                        </div>
+                        </body>
+
+                        </html>

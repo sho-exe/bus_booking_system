@@ -25,7 +25,7 @@
                 <div class="tab-nav">
                     <a href="#" class="tab active"><i class="fa-solid fa-magnifying-glass"></i> Book Trip</a>
                     <a href="customer.jsp" class="tab"><i class="fa-solid fa-ticket"></i> My Bookings</a>
-                    <a href="#" class="tab"><i class="fa-regular fa-user"></i> Profile</a>
+                    <a href="profile.jsp" class="tab"><i class="fa-regular fa-user"></i> Profile</a>
                 </div>
 
                 <br>

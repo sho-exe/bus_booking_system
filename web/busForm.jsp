@@ -170,7 +170,7 @@
 
                     <div class="form-group">
                         <label>Total Seats</label>
-                        <input type="number" name="totalSeat" id="totalSeat" value="<%= (bus != null) ? bus.getTotalSeat() : ""%>" class="form-input" readonly required>
+                        <input type="number" name="totalSeat" id="totalSeat" value="<%= (bus != null) ? bus.getTotalSeats() : ""%>" class="form-input" readonly required>
                     </div>
 
 
@@ -193,7 +193,20 @@
                     <button type="submit" class="btn-primary" style="margin-top: 10px;"><%= (bus == null) ? "Save Bus" : "Update Bus"%></button>
                 </form>
             </div>
+
         </div>
+
+            
+            <div class="form-group">
+                <label>Total Seats</label>
+                <input type="number" name="totalSeat" id="totalSeat" value="<%= (bus != null) ? bus.getTotalSeats() : "" %>" class="form-input" readonly required>
+            </div>
+            
+            <button type="submit" class="btn-primary" style="margin-top: 10px;"><%= (bus == null) ? "Save Bus" : "Update Bus" %></button>
+        </form>
+    </div>
+</div>
+
 
         <footer class="main-footer">
             &copy; 2026 Sani Express. All rights reserved.

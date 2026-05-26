@@ -23,7 +23,7 @@ public class PaymentDAO {
         return connection;
     }
 
-    public boolean insertPayment(Payment payment) {
+    public boolean insertPayment(Payment payment) throws SQLException {
 
         boolean success = false;
 
@@ -51,8 +51,8 @@ public class PaymentDAO {
             ps.close();
             conn.close();
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            e.getMessage();
         }
 
         return success;
