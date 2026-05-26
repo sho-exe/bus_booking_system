@@ -2,98 +2,217 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset="UTF-8">
-    <title><%= (request.getAttribute("bus") == null) ? "Add New Bus" : "Edit Bus" %> - Sani Express</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background-color: #f8f9fa; color: #333; display: flex; flex-direction: column; min-height: 100vh; }
-        .admin-header { background-color: #e60000; color: white; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; }
-        .admin-header h1 { font-size: 24px; font-weight: 700; margin-bottom: 5px; }
-        .admin-header p { font-size: 14px; opacity: 0.9; }
-        .btn-logout { background-color: white; color: #e60000; border: none; padding: 10px 24px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: background-color 0.2s; }
-        .btn-logout:hover { background-color: #f3f4f6; }
-        .admin-container { max-width: 1200px; margin: 40px auto; padding: 0 20px; width: 100%; }
-        .auth-card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); border: 1px solid #f3f4f6; }
-        .auth-card h2 { font-size: 24px; font-weight: 700; color: #111827; margin-bottom: 8px; }
-        .auth-card p { font-size: 15px; color: #6b7280; margin-bottom: 30px; }
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; font-size: 13px; font-weight: 600; color: #111827; margin-bottom: 8px; }
-        .form-input { width: 100%; padding: 12px 16px; background-color: #f3f4f6; border: 1px solid transparent; border-radius: 8px; font-size: 15px; color: #111827; transition: all 0.2s; }
-        .form-input:focus { outline: none; border-color: #e60000; background-color: white; box-shadow: 0 0 0 3px rgba(230, 0, 0, 0.1); }
-        .btn-primary { width: 100%; padding: 14px; background-color: #e60000; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background-color 0.2s; text-align: center; text-decoration: none; display: inline-block; }
-        .btn-primary:hover { background-color: #cc0000; }
-        .main-footer { background-color: #1f2937; color: white; text-align: center; padding: 20px; font-size: 14px; margin-top: auto; }
-    </style>
-</head>
-<body>
+    <head>
+        <meta charset="UTF-8">
+        <title><%= (request.getAttribute("bus") == null) ? "Add New Bus" : "Edit Bus"%> - Sani Express</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                font-family: 'Inter', sans-serif;
+            }
+            body {
+                background-color: #f8f9fa;
+                color: #333;
+                display: flex;
+                flex-direction: column;
+                min-height: 100vh;
+            }
+            .admin-header {
+                background-color: #e60000;
+                color: white;
+                padding: 20px 40px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .admin-header h1 {
+                font-size: 24px;
+                font-weight: 700;
+                margin-bottom: 5px;
+            }
+            .admin-header p {
+                font-size: 14px;
+                opacity: 0.9;
+            }
+            .btn-logout {
+                background-color: white;
+                color: #e60000;
+                border: none;
+                padding: 10px 24px;
+                border-radius: 8px;
+                font-size: 14px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: background-color 0.2s;
+            }
+            .btn-logout:hover {
+                background-color: #f3f4f6;
+            }
+            .admin-container {
+                max-width: 1200px;
+                margin: 40px auto;
+                padding: 0 20px;
+                width: 100%;
+            }
+            .auth-card {
+                background: white;
+                padding: 40px;
+                border-radius: 12px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+                border: 1px solid #f3f4f6;
+            }
+            .auth-card h2 {
+                font-size: 24px;
+                font-weight: 700;
+                color: #111827;
+                margin-bottom: 8px;
+            }
+            .auth-card p {
+                font-size: 15px;
+                color: #6b7280;
+                margin-bottom: 30px;
+            }
+            .form-group {
+                margin-bottom: 20px;
+            }
+            .form-group label {
+                display: block;
+                font-size: 13px;
+                font-weight: 600;
+                color: #111827;
+                margin-bottom: 8px;
+            }
+            .form-input {
+                width: 100%;
+                padding: 12px 16px;
+                background-color: #f3f4f6;
+                border: 1px solid transparent;
+                border-radius: 8px;
+                font-size: 15px;
+                color: #111827;
+                transition: all 0.2s;
+            }
+            .form-input:focus {
+                outline: none;
+                border-color: #e60000;
+                background-color: white;
+                box-shadow: 0 0 0 3px rgba(230, 0, 0, 0.1);
+            }
+            .btn-primary {
+                width: 100%;
+                padding: 14px;
+                background-color: #e60000;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                font-size: 16px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: background-color 0.2s;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+            }
+            .btn-primary:hover {
+                background-color: #cc0000;
+            }
+            .main-footer {
+                background-color: #1f2937;
+                color: white;
+                text-align: center;
+                padding: 20px;
+                font-size: 14px;
+                margin-top: auto;
+            }
+        </style>
+    </head>
+    <body>
 
-<%
-    Bus bus = (Bus) request.getAttribute("bus");
-%>
+        <%
+            Bus bus = (Bus) request.getAttribute("bus");
+        %>
 
-<header class="admin-header">
-    <div>
-        <h1>Sani Express - Staff Portal</h1>
-        <p><%= (bus == null) ? "Add a new bus to the fleet" : "Edit bus details" %></p>
-    </div>
-    <button class="btn-logout" onclick="location.href='BusServlet?action=list'">Back to Dashboard</button>
-</header>
-
-<div class="admin-container" style="max-width: 600px; margin-top: 60px;">
-    <div class="auth-card">
-        <h2><%= (bus == null) ? "Add New Bus" : "Edit Bus" %></h2>
-        <p>Fill in the bus details below</p>
-        
-        <form action='BusServlet?action=<%= (bus == null) ? "insert" : "update" %>' method="post">
-            <% if (bus != null) { %>
-                <input type="hidden" name="busID" value="<%= bus.getBusId() %>" />
-            <% } %>
-
-            <div class="form-group">
-                <label>Bus Number</label>
-                <input type="text" name="busNumber" value="<%= (bus != null) ? bus.getBusNumber() : "" %>" class="form-input" required>
+        <header class="admin-header">
+            <div>
+                <h1>Sani Express - Staff Portal</h1>
+                <p><%= (bus == null) ? "Add a new bus to the fleet" : "Edit bus details"%></p>
             </div>
-            
-            <div class="form-group">
-                <label>Bus Type</label>
-                <select name="busType" id="busType" class="form-input" required onchange="setSeat()">
-                    <option value="">-- Select Bus Type --</option>
-                    <option value="Single Decker" <%= (bus != null && "Single Decker".equalsIgnoreCase(bus.getBusType())) ? "selected" : "" %>>Single Decker</option>
-                    <option value="Double Decker" <%= (bus != null && "Double Decker".equalsIgnoreCase(bus.getBusType())) ? "selected" : "" %>>Double Decker</option>
-                </select>
+            <button class="btn-logout" onclick="location.href = 'BusServlet?action=list'">Back to Dashboard</button>
+        </header>
+
+        <div class="admin-container" style="max-width: 600px; margin-top: 60px;">
+            <div class="auth-card">
+                <h2><%= (bus == null) ? "Add New Bus" : "Edit Bus"%></h2>
+                <p>Fill in the bus details below</p>
+
+                <form action='BusServlet?action=<%= (bus == null) ? "insert" : "update"%>' method="post">
+                    <% if (bus != null) {%>
+                    <input type="hidden" name="busID" value="<%= bus.getBusId()%>" />
+                    <% }%>
+
+                    <div class="form-group">
+                        <label>Bus Number</label>
+                        <input type="text" name="busNumber" value="<%= (bus != null) ? bus.getBusNumber() : ""%>" class="form-input" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Bus Type</label>
+                        <select name="busType" id="busType" class="form-input" required onchange="setSeat()">
+                            <option value="">-- Select Bus Type --</option>
+                            <option value="Single Decker" <%= (bus != null && "Single Decker".equalsIgnoreCase(bus.getBusType())) ? "selected" : ""%>>Single Decker</option>
+                            <option value="Double Decker" <%= (bus != null && "Double Decker".equalsIgnoreCase(bus.getBusType())) ? "selected" : ""%>>Double Decker</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Total Seats</label>
+                        <input type="number" name="totalSeat" id="totalSeat" value="<%= (bus != null) ? bus.getTotalSeat() : ""%>" class="form-input" readonly required>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label>Roadtax Info</label>
+                        <input type="text" name="roadtax" value="<%= (bus != null && bus.getRoadtax() != null) ? bus.getRoadtax() : ""%>" class="form-input" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Insurance Info</label>
+                        <input type="text" name="insurance" value="<%= (bus != null && bus.getInsurance() != null) ? bus.getInsurance() : ""%>" class="form-input" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Expiry Date</label>
+                        <input type="date" name="expiryDate" value="<%= (bus != null && bus.getExpiryDate() != null) ? bus.getExpiryDate() : ""%>" class="form-input" required>
+                    </div>
+
+
+                    <button type="submit" class="btn-primary" style="margin-top: 10px;"><%= (bus == null) ? "Save Bus" : "Update Bus"%></button>
+                </form>
             </div>
-            
-            <div class="form-group">
-                <label>Total Seats</label>
-                <input type="number" name="totalSeat" id="totalSeat" value="<%= (bus != null) ? bus.getTotalSeat() : "" %>" class="form-input" readonly required>
-            </div>
-            
-            <button type="submit" class="btn-primary" style="margin-top: 10px;"><%= (bus == null) ? "Save Bus" : "Update Bus" %></button>
-        </form>
-    </div>
-</div>
+        </div>
 
-<footer class="main-footer">
-    &copy; 2026 Sani Express. All rights reserved.
-</footer>
+        <footer class="main-footer">
+            &copy; 2026 Sani Express. All rights reserved.
+        </footer>
 
-<script>
-    function setSeat() {
-        const type = document.getElementById("busType").value;
-        const seat = document.getElementById("totalSeat");
+        <script>
+            function setSeat() {
+                const type = document.getElementById("busType").value;
+                const seat = document.getElementById("totalSeat");
 
-        if (type === "Single Decker") {
-            seat.value = 40;
-        } else if (type === "Double Decker") {
-            seat.value = 53;
-        } else {
-            seat.value = "";
-        }
-    }
-</script>
+                if (type === "Single Decker") {
+                    seat.value = 40;
+                } else if (type === "Double Decker") {
+                    seat.value = 53;
+                } else {
+                    seat.value = "";
+                }
+            }
+        </script>
 
-</body>
+    </body>
 </html>

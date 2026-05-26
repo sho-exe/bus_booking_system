@@ -21,29 +21,38 @@
             <th>Bus Number</th>
             <th>Bus Type</th>
             <th>Total Seats</th>
+            <th>Roadtax</th>
+            <th>Insurance</th>
+            <th>Expiry Date</th>
             <th>Actions</th>
         </tr>
 
         <% if (busList != null && !busList.isEmpty()) {
-            for (Bus bus : busList) {
-                String type = bus.getBusType().toLowerCase();
-                String badgeColor = type.contains("double") ? "#eab308" : "#3b82f6";
+                for (Bus bus : busList) {
+                    String type = bus.getBusType().toLowerCase();
+                    String badgeColor = type.contains("double") ? "#eab308" : "#3b82f6";
         %>
         <tr>
-            <td><%= bus.getBusId() %></td>
-            <td><span class="stack-main"><%= bus.getBusNumber() %></span></td>
+            <td><%= bus.getBusId()%></td>
+            <td><span class="stack-main"><%= bus.getBusNumber()%></span></td>
             <td>
-                <span style="background: <%= badgeColor %>; color: white; padding: 4px 8px; border-radius: 12px; font-size: 12px; font-weight: 600;">
-                    <%= bus.getBusType() %>
+                <span style="background: <%= badgeColor%>; color: white; padding: 4px 8px; border-radius: 12px; font-size: 12px; font-weight: 600;">
+                    <%= bus.getBusType()%>
                 </span>
             </td>
-            <td><%= bus.getTotalSeat() %></td>
+            <td><%= bus.getTotalSeat()%></td>
+
+            <td><%= bus.getRoadtax() != null ? bus.getRoadtax() : "N/A"%></td>
+            <td><%= bus.getInsurance() != null ? bus.getInsurance() : "N/A"%></td>
+            <td><%= bus.getExpiryDate() != null ? bus.getExpiryDate() : "N/A"%></td>
+
+
             <td>
                 <div class="action-btns">
-                    <a href="BusServlet?action=edit&busID=<%= bus.getBusId() %>" class="btn-icon">
+                    <a href="BusServlet?action=edit&busID=<%= bus.getBusId()%>" class="btn-icon">
                         <i class="fa-solid fa-pen"></i>
                     </a>
-                    <a href="BusServlet?action=delete&id=<%= bus.getBusId() %>" 
+                    <a href="BusServlet?action=delete&id=<%= bus.getBusId()%>" 
                        class="btn-icon delete"
                        onclick="return confirm('Are you sure you want to delete this bus?')">
                         <i class="fa-solid fa-trash-can"></i>
@@ -56,6 +65,6 @@
         <tr>
             <td colspan="5" style="text-align:center; padding: 40px; color:#9ca3af;">No buses found in the database.</td>
         </tr>
-        <% } %>
+        <% }%>
     </table>
 </div>

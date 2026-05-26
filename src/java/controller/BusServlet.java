@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import model.Bus;
 
-
 /**
  *
  * @author sho
@@ -30,13 +29,12 @@ public class BusServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    
     private BusDAO busDAO;
-    
+
     public void init() {
         busDAO = new BusDAO();
     }
-    
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
@@ -63,7 +61,7 @@ public class BusServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
- @Override
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getParameter("action");
@@ -110,7 +108,7 @@ public class BusServlet extends HttpServlet {
 
     private void showEditForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         try {
             int id = Integer.parseInt(request.getParameter("busID"));
             Bus existingBus = busDAO.selectBus(id);
@@ -128,9 +126,12 @@ public class BusServlet extends HttpServlet {
         String busNumber = request.getParameter("busNumber");
         String busType = request.getParameter("busType");
         int totalSeat = Integer.parseInt(request.getParameter("totalSeat"));
+        String roadtax = request.getParameter("roadtax");
+        String insurance = request.getParameter("insurance");
+        String expiryDate = request.getParameter("expiryDate");
         System.out.println(busType);
 
-        Bus newBus = new Bus(busNumber, busType, totalSeat);
+        Bus newBus = new Bus(busNumber, busType, totalSeat, roadtax, insurance, expiryDate);
         busDAO.insertBus(newBus);
         response.sendRedirect("BusServlet?action=list");
     }
@@ -141,8 +142,11 @@ public class BusServlet extends HttpServlet {
         String busNumber = request.getParameter("busNumber");
         int totalSeat = Integer.parseInt(request.getParameter("totalSeat"));
         String busType = request.getParameter("busType");
+        String roadtax = request.getParameter("roadtax");
+        String insurance = request.getParameter("insurance");
+        String expiryDate = request.getParameter("expiryDate");
 
-        Bus bus = new Bus(busID, busNumber, busType, totalSeat);
+        Bus bus = new Bus(busID, busNumber, busType, totalSeat, roadtax, insurance, expiryDate);
         busDAO.updateBus(bus);
         response.sendRedirect("BusServlet?action=list");
     }
@@ -183,4 +187,3 @@ public class BusServlet extends HttpServlet {
     }// </editor-fold>
 
 }
-

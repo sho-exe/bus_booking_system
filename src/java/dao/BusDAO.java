@@ -22,7 +22,6 @@ public class BusDAO {
     private String jdbcUsername = "root";
     private String jdbcPassword = "";
 
-    // Method untuk mendapatkan sambungan Database
     protected Connection getConnection() {
         Connection connection = null;
         try {
@@ -51,11 +50,14 @@ public class BusDAO {
     }
 
     public void insertBus(Bus bus) {
-        String sql = "INSERT INTO Bus (bus_number, bus_type, total_seats) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO Bus (bus_number, bus_type, total_seats, roadtax, insurance, expiry_date) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, bus.getBusNumber());
             stmt.setString(2, bus.getBusType());
             stmt.setInt(3, bus.getTotalSeat());
+            stmt.setString(4, bus.getRoadtax());
+            stmt.setString(5, bus.getInsurance());
+            stmt.setString(6, bus.getExpiryDate());
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -71,7 +73,10 @@ public class BusDAO {
                         rs.getInt("bus_id"),
                         rs.getString("bus_number"),
                         rs.getString("bus_type"),
-                        rs.getInt("total_seats")
+                        rs.getInt("total_seats"),
+                        rs.getString("roadtax"),
+                        rs.getString("insurance"),
+                        rs.getString("expiry_date")
                 ));
             }
         } catch (SQLException e) {
@@ -79,8 +84,6 @@ public class BusDAO {
         }
         return buses;
     }
-    
-    
 
     public Bus selectBus(int id) {
         Bus bus = null;
@@ -93,7 +96,10 @@ public class BusDAO {
                         rs.getInt("bus_id"),
                         rs.getString("bus_number"),
                         rs.getString("bus_type"),
-                        rs.getInt("total_seats")
+                        rs.getInt("total_seats"),
+                        rs.getString("roadtax"),
+                        rs.getString("insurance"),
+                        rs.getString("expiry_date")
                 );
             }
         } catch (SQLException e) {
@@ -104,12 +110,15 @@ public class BusDAO {
 
     public boolean updateBus(Bus bus) {
         boolean rowUpdated = false;
-        String sql = "UPDATE Bus SET bus_Number=?, bus_type=?, total_seats=? WHERE bus_id=?";
+        String sql = "UPDATE Bus SET bus_Number=?, bus_type=?, total_seats=?, roadtax=?, insurance=?, expiry_date=? WHERE bus_id=?";
         try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, bus.getBusNumber());
             stmt.setString(2, bus.getBusType());
             stmt.setInt(3, bus.getTotalSeat());
-            stmt.setInt(4, bus.getBusId());
+            stmt.setString(4, bus.getRoadtax());
+            stmt.setString(5, bus.getInsurance());
+            stmt.setString(6, bus.getExpiryDate());
+            stmt.setInt(7, bus.getBusId());
             rowUpdated = stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();

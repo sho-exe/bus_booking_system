@@ -31,7 +31,7 @@ public class LoginServlet extends HttpServlet {
 
 
             if ("System Admin".equalsIgnoreCase(user.getRole())) {
-                response.sendRedirect("TripServlet?action=list");
+                response.sendRedirect("BusServlet?action=list");
             } else {
                 response.sendRedirect("Booking.jsp");
             }
