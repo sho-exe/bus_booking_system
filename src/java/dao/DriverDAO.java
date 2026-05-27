@@ -19,7 +19,7 @@ import java.sql.SQLException;
  */
 public class DriverDAO {
 
-    private String jdbcURL = "jdbc:mysql://localhost:3306/bus";
+    private String jdbcURL = "jdbc:mysql://localhost:3307/bus";
     private String jdbcUsername = "root";
     private String jdbcPassword = "";
 
@@ -94,12 +94,13 @@ public class DriverDAO {
      * tab.
      */
     public boolean updateDriverProfile(Driver driver) {
-        String sql = "UPDATE user SET name = ?, phone = ?, email = ? WHERE id = ?";
+        // Updated to target the correct table and columns based on your DB screenshot
+        String sql = "UPDATE driver SET name = ?, license_number = ?, phone_number = ? WHERE driver_id = ?";
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, driver.getName());
-            ps.setString(2, driver.getPhone());
-            ps.setString(3, driver.getEmail());
+            ps.setString(2, driver.getLicenseNumber());
+            ps.setString(3, driver.getPhone());
             ps.setInt(4, driver.getId());
 
             int rowsAffected = ps.executeUpdate();

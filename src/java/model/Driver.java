@@ -9,25 +9,23 @@ package model;
  * @author Asus
  */
 public class Driver {
-    private int id;
-    private String name;
-    private String email;
-    private String phone;
-    private String password;
 
-    // Default constructor
+    private int id; 
+    private String name;
+    private String licenseNumber; 
+    private String phone; 
+    private String password; 
+
     public Driver() {
     }
 
-    // Parameterized constructor
-    public Driver(int id, String name, String email, String phone) {
+    public Driver(int id, String name, String licenseNumber, String phone) {
         this.id = id;
         this.name = name;
-        this.email = email;
+        this.licenseNumber = licenseNumber;
         this.phone = phone;
     }
 
-    // Getters and Setters
     public int getId() {
         return id;
     }
@@ -44,12 +42,12 @@ public class Driver {
         this.name = name;
     }
 
-    public String getEmail() {
-        return email;
+    public String getLicenseNumber() {
+        return licenseNumber;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setLicenseNumber(String licenseNumber) {
+        this.licenseNumber = licenseNumber;
     }
 
     public String getPhone() {

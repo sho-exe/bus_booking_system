@@ -7,7 +7,7 @@ import java.util.List;
 
 public class TripDAO {
 
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/bus";
+    private static final String DB_URL = "jdbc:mysql://localhost:3307/bus";
     private static final String DB_USER = "root";
     private static final String DB_PASSWORD = "";
 

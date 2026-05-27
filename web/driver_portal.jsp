@@ -5,184 +5,172 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Driver Page</title>
-    </head>
-    <body>
+        <title>Sani Express - Driver Portal</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <style>
             body {
-                background-color: #f8f9fa;
+                background-color: #f4f6f9;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             }
+            /* Header mimicking Image 2 */
             .header-bg {
-                background-color: #E3000F;
+                background-color: #d80000; /* Sani Express Red */
+                color: white;
+                padding: 15px 20px;
+            }
+            .logout-btn {
+                background-color: white;
+                color: #d80000;
+                font-weight: bold;
+                border-radius: 6px;
+                padding: 6px 20px;
+                text-decoration: none;
+                border: none;
+            }
+            .logout-btn:hover {
+                background-color: #f8f9fa;
+                color: #b30000;
+            }
+            /* Pill Navigation matching the "Buses" toggle in Image 2 */
+            .nav-pills-custom {
+                background-color: #f0f2f5;
+                border-radius: 30px;
+                padding: 5px;
+                display: inline-flex;
+                gap: 5px;
+            }
+            .nav-pills-custom .nav-link {
+                color: #6c757d;
+                border-radius: 25px;
+                padding: 8px 24px;
+                font-weight: 600;
+                border: none;
+                background: transparent;
+            }
+            .nav-pills-custom .nav-link.active {
+                background-color: white;
+                color: #212529;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            }
+            /* Clean Card Style */
+            .card-custom {
+                background: white;
+                border-radius: 12px;
+                border: none;
+                padding: 30px;
+            }
+            /* Clean Table Style */
+            .table-custom th {
+                color: #000;
+                font-weight: 600;
+                border-bottom: 1px solid #e9ecef;
+                padding-bottom: 15px;
+                font-size: 0.95rem;
+            }
+            .table-custom td {
+                padding: 18px 0;
+                vertical-align: middle;
+                border-bottom: 1px solid #f0f2f5;
+                font-size: 0.95rem;
+            }
+            .btn-red {
+                background-color: #d80000;
+                color: white;
+                font-weight: 600;
+                border-radius: 6px;
+            }
+            .btn-red:hover {
+                background-color: #b30000;
                 color: white;
             }
-            .stat-card {
-                border-radius: 10px;
-                border: 1px solid #eaeaea;
-            }
-            .nav-pills .nav-link.active {
-                background-color: #f8f9fa;
-                color: black;
-                border: 1px solid #dee2e6;
-                font-weight: bold;
-            }
-            .nav-pills .nav-link {
-                color: #555;
-            }
-            .table th {
-                background-color: white;
-                border-bottom: 2px solid #eaeaea;
-                color: #333;
-            }
-            .table td {
-                vertical-align: middle;
-            }
-            .text-gray {
-                color: #888;
-                font-size: 0.9rem;
-            }
-            .icon-circle {
-                width: 50px;
-                height: 50px;
-                background-color: #fee2e2;
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
         </style>
-        <!-- Header -->
-        <div class="header-bg p-4 shadow-sm">
-            <div class="container d-flex justify-content-between align-items-center">
-                <div>
-                    <h2 class="mb-0 fw-bold">Sani Express - Driver Portal</h2>
-                    <p class="mb-0">Welcome, ${driver.name}</p> <!-- Injected from Session -->
-                </div>
-                <a href="LogoutServlet" class="btn btn-light px-4">Logout</a>
+    </head>
+    <body>
+        <div class="header-bg shadow-sm d-flex justify-content-between align-items-center">
+            <div>
+                <h4 class="mb-0 fw-bold">Sani Express - Staff Portal</h4>
+                <small>Welcome, ${driver.name}</small>
             </div>
+            <a href="LogoutServlet" class="logout-btn">Logout</a>
         </div>
 
-                <!--       
         <div class="container mt-5">
-            
-            <div class="row mb-4">
-                <div class="col-md-6 mb-3 mb-md-0">
-                    <div class="stat-card bg-white p-4 d-flex justify-content-between align-items-center shadow-sm">
-                        <div>
-                            <p class="mb-1 text-secondary">My Assigned Trips</p>
-                            <h2 class="text-danger fw-bold mb-0">${assignedCount}</h2>
-                        </div>
-                        <div class="icon-circle">
-                            
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#E3000F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="stat-card bg-white p-4 d-flex justify-content-between align-items-center shadow-sm">
-                        <div>
-                            <p class="mb-1 text-secondary">Upcoming Trips</p>
-                            <h2 class="text-danger fw-bold mb-0">${upcomingCount}</h2>
-                        </div>
-                        <div class="icon-circle">
-                            
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#E3000F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                        </div>
-                    </div>
-                </div>
+            <div class="nav-pills-custom mb-4" role="tablist">
+                <button class="nav-link active d-flex align-items-center gap-2" id="trips-tab" data-bs-toggle="pill" data-bs-target="#trips" type="button" role="tab">
+                    My Trips
+                </button>
+                <button class="nav-link d-flex align-items-center gap-2" id="profile-tab" data-bs-toggle="pill" data-bs-target="#profile" type="button" role="tab">
+                    Profile
+                </button>
             </div>
-                        -->
-            <!-- Navigation Tabs -->
-            <ul class="nav nav-pills mb-4 bg-white p-2 rounded shadow-sm d-inline-flex" id="pills-tab" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active rounded-pill px-5 d-flex align-items-center gap-2" id="pills-trips-tab" data-bs-toggle="pill" data-bs-target="#pills-trips" type="button" role="tab">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                        My Trips
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link rounded-pill px-5 d-flex align-items-center gap-2" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                        Profile
-                    </button>
-                </li>
-            </ul>
 
-            <h3 class="fw-bold mb-3">My Assigned Trips</h3>
+            <div class="tab-content">
 
-            <!-- Tab Content -->
-            <div class="tab-content" id="pills-tabContent">
-
-                <!-- TRIPS TAB -->
-                <div class="tab-pane fade show active" id="pills-trips" role="tabpanel">
-                    <div class="card shadow-sm border-0 rounded-3 p-4">
-                        <h5 class="fw-bold mb-4">Trip Schedule</h5>
+                <div class="tab-pane fade show active" id="trips" role="tabpanel">
+                    <div class="card-custom shadow-sm">
+                        <h4 class="fw-bold mb-4">Trip Schedule</h4>
                         <div class="table-responsive">
-                            <table class="table table-borderless border-bottom">
+                            <table class="table table-borderless table-custom">
                                 <thead>
-                                    <tr class="border-bottom">
-                                        <th class="pb-3">Date</th>
-                                        <th class="pb-3">Route</th>
-                                        <th class="pb-3">Departure</th>
-                                        <th class="pb-3">Arrival</th>
-                                        <th class="pb-3">Bus</th>
-                                        <th class="pb-3">Passengers</th>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Route</th>
+                                        <th>Departure</th>
+                                        <th>Arrival</th>
+                                        <th>Bus</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <!-- Loop through trips fetched from the Database via Servlet -->
-                                <c:forEach var="trip" items="${tripList}">
-                                    <tr class="border-bottom">
-                                        <td class="fw-bold py-3">${trip.tripDate}</td>
-                                        <td class="py-3">
-                                            <span class="d-block">${trip.origin}</span>
-                                            <small class="text-muted d-block my-1">↓</small>
-                                            <span class="d-block">${trip.destination}</span>
-                                        </td>
-                                        <td class="py-3">${trip.departureTime}</td>
-                                        <td class="py-3">${trip.arrivalTime}</td>
-                                        <td class="py-3">
-                                            <span class="d-block">${trip.busId}</span>
-                                            <span class="text-gray d-block">${trip.plateNumber}</span>
-                                            <span class="text-gray d-block">${trip.busType}</span>
-                                        </td>
-                                        <td class="py-3">
-                                            <span class="fw-bold d-block">${trip.bookedSeats} / ${trip.totalSeats}</span>
-                                            <span class="text-gray d-block">${trip.totalSeats - trip.bookedSeats} seats left</span>
-                                        </td>
-                                    </tr>
-                                </c:forEach>
+                                    <c:forEach var="trip" items="${tripList}">
+                                        <tr>
+                                            <td class="fw-semibold">${trip.tripDate}</td>
+                                            <td>
+                                                <span class="d-block fw-semibold">${trip.origin}</span>
+                                                <small class="text-muted">to ${trip.destination}</small>
+                                            </td>
+                                            <td>${trip.departureTime}</td>
+                                            <td>${trip.arrivalTime}</td>
+                                            <td>
+                                                <span class="d-block fw-semibold">${trip.plateNumber}</span>
+                                                <span class="badge bg-secondary">${trip.busType}</span>
+                                            </td>
+                                        </tr>
+                                    </c:forEach>
+                                    <c:if test="${empty tripList}">
+                                        <tr>
+                                            <td colspan="5" class="text-center text-muted py-4">No trips assigned yet.</td>
+                                        </tr>
+                                    </c:if>
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
 
-                <!-- PROFILE TAB -->
-                <div class="tab-pane fade" id="pills-profile" role="tabpanel">
-                    <div class="card shadow-sm border-0 rounded-3 p-4">
-                        <h5 class="fw-bold mb-4">Update Profile</h5>
+                <div class="tab-pane fade" id="profile" role="tabpanel">
+                    <div class="card-custom shadow-sm">
+                        <h4 class="fw-bold mb-4">Update Profile</h4>
                         <form action="UpdateProfileServlet" method="POST" class="w-50">
                             <input type="hidden" name="driverId" value="${driver.id}">
                             <div class="mb-3">
                                 <label class="form-label fw-semibold">Full Name</label>
-                                <input type="text" class="form-control bg-light" name="name" value="${driver.name}" required>
+                                <input type="text" class="form-control" name="name" value="${driver.name}" required>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label fw-semibold">Email Address</label>
-                                <input type="email" class="form-control bg-light" name="email" value="${driver.email}" required>
+                                <label class="form-label fw-semibold">License Number</label>
+                                <input type="text" class="form-control" name="license_number" value="${driver.licenseNumber}" required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label fw-semibold">Phone Number</label>
-                                <input type="text" class="form-control bg-light" name="phone" value="${driver.phone}" required>
+                                <input type="text" class="form-control" name="phone_number" value="${driver.phone}" required>
                             </div>
                             <div class="mt-4">
-                                <button type="submit" class="btn btn-danger px-4 py-2 fw-semibold">Save Changes</button>
+                                <button type="submit" class="btn btn-red px-4 py-2">Save Changes</button>
                             </div>
                         </form>
                     </div>
@@ -191,7 +179,6 @@
             </div>
         </div>
 
-        <!-- Bootstrap JS for Tabs functionality -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>
