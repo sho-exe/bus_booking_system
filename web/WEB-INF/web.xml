@@ -3,8 +3,6 @@
     <welcome-file-list>
         <welcome-file>login.html</welcome-file>
     </welcome-file-list>
-
-    
     <servlet>
         <servlet-name>BookingServlet</servlet-name>
         <servlet-class>controller.BookingServlet</servlet-class>
@@ -29,6 +27,7 @@
         <servlet-name>RegisterServlet</servlet-name>
         <servlet-class>controller.RegisterServlet</servlet-class>
     </servlet>
+    
     <servlet-mapping>
         <servlet-name>BookingServlet</servlet-name>
         <url-pattern>/booking</url-pattern>
@@ -53,6 +52,7 @@
         <servlet-name>RegisterServlet</servlet-name>
         <url-pattern>/RegisterServlet</url-pattern>
     </servlet-mapping>
+    
     <session-config>
         <session-timeout>
             30

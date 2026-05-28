@@ -1,14 +1,16 @@
-<%@page import="java.sql.*"%>
-<%@page import="dao.TripDAO"%>
-<%@page import="dao.BusDAO"%>
-<%@page import="dao.BookingDAO"%>
+<%-- 
+    Document   : driver-assignment-list
+    Created on : 28 May 2026, 12:04:46 pm
+    Author     : Asus
+--%>
+
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset="UTF-8">
-        <title>Admin Dashboard - Sani Express</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>Assign Driver</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
         <style>
             @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
@@ -230,88 +232,72 @@
         </style>
     </head>
     <body>
-
-        <header class="admin-header">
-            <div>
-                <h1>Sani Express - Staff Portal</h1>
-                <p>Welcome, ${sessionScope.username != null ? sessionScope.username : 'Sarah Admin'}</p>
-            </div>
-            <button class="btn-logout" onclick="location.href = 'login.html'">Logout</button>
-        </header>
-
-        <%
-            TripDAO tripDAO = new TripDAO();
-            BusDAO busDAO = new BusDAO();
-            BookingDAO bookingDAO = new BookingDAO();
-
-            int totalTrips = tripDAO.getAllTrips() != null ? tripDAO.getAllTrips().size() : 0;
-            int totalBuses = busDAO.selectAllBuses() != null ? busDAO.selectAllBuses().size() : 0;
-            int totalBookings = bookingDAO.getAllBookings() != null ? bookingDAO.getAllBookings().size() : 0;
-        %>
-
-        <div class="admin-container">
-            <div class="stat-cards">
-                <div class="stat-card">
-                    <div class="stat-info">
-                        <h3>Total Trips</h3>
-                        <h2><%= totalTrips%></h2>
-                    </div>
-                    <div class="stat-icon"><i class="fa-solid fa-location-dot"></i></div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-info">
-                        <h3>Total Buses</h3>
-                        <h2><%= totalBuses%></h2>
-                    </div>
-                    <div class="stat-icon"><i class="fa-solid fa-bus"></i></div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-info">
-                        <h3>Total Drivers</h3>
-                        <h2>5</h2>
-                    </div>
-                    <div class="stat-icon"><i class="fa-solid fa-user-group"></i></div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-info">
-                        <h3>Total Bookings</h3>
-                        <h2><%= totalBookings%></h2>
-                    </div>
-                    <div class="stat-icon"><i class="fa-solid fa-ticket"></i></div>
-                </div>
-            </div>
-
-            <div class="admin-tabs">
-                <a href="TripServlet?action=list" class="admin-tab ${activeTab == 'trips' || empty activeTab ? 'active' : ''}">
-                    <i class="fa-solid fa-location-dot"></i> Trips
-                </a>
-                <a href="BusServlet?action=list" class="admin-tab ${activeTab == 'buses' ? 'active' : ''}">
-                    <i class="fa-solid fa-bus"></i> Buses
-                </a>
-                <a href="AdminDriverServlet" class="admin-tab ${activeTab == 'drivers' ? 'active' : ''}">
-                    <i class="fa-solid fa-user-group"></i> Drivers
-                </a>
-                <a href="BookingServlet?action=adminList" class="admin-tab ${activeTab == 'bookings' ? 'active' : ''}">
-                    <i class="fa-solid fa-ticket"></i> Bookings
-                </a>
-            </div>
-
-            <c:choose>
-                <c:when test="${activeTab == 'buses'}">
-                    <jsp:include page="busList.jsp"/>
-                </c:when>
-                <c:when test="${activeTab == 'drivers'}">
-                    <jsp:include page="driver-assignment-list.jsp"/>
-                </c:when>
-                <c:when test="${activeTab == 'bookings'}">
-                    <jsp:include page="booking-list.jsp"/>
-                </c:when>
-                <c:otherwise>
-                    <jsp:include page="trip-list.jsp"/>
-                </c:otherwise>
-            </c:choose>
-
+        <div class="section-header">
+            <h2>Driver Assignments</h2>
         </div>
 
+        <div class="table-card">
+            <h3>Assign Drivers to Trips</h3>
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Trip ID</th>
+                        <th>Route Info</th>
+                        <th>Departure</th>
+                        <th>Bus Plate</th>
+                        <th>Current Driver</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <c:forEach var="trip" items="${tripList}">
+                        <tr>
+                            <td class="stack-main">#${trip.tripId}</td>
+                            <td>
+                                <div class="stack">
+                                    <span class="stack-main">${trip.origin}</span>
+                                    <span class="stack-sub">to ${trip.destination}</span>
+                                </div>
+                            </td>
+                            <td class="stack-main">${trip.departureTime}</td>
+                            <td class="stack-main">${trip.plateNumber}</td>
+                            <td>
+                                <c:choose>
+                                    <c:when test="${not empty trip.driverName}">
+                                        <span style="color: #059669; font-weight: 600; background: #d1fae5; padding: 4px 10px; border-radius: 20px; font-size: 12px;">
+                                            ${trip.driverName}
+                                        </span>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <span style="color: #e60000; font-weight: 600; background: #fee2e2; padding: 4px 10px; border-radius: 20px; font-size: 12px;">
+                                            Unassigned
+                                        </span>
+                                    </c:otherwise>
+                                </c:choose>
+                            </td>
+                            <td>
+                                <form action="AdminDriverServlet" method="POST" style="display: flex; gap: 8px;">
+                                    <input type="hidden" name="trip_id" value="${trip.tripId}">
+                                    <select name="driver_id" style="padding: 8px; border-radius: 6px; border: 1px solid #e5e7eb; outline: none; flex-grow: 1;" required>
+                                        <option value="" disabled selected>Select Driver</option>
+                                        <c:forEach var="driver" items="${driverList}">
+                                            <option value="${driver.id}" ${driver.id == trip.driverId ? 'selected' : ''}>
+                                                ${driver.name}
+                                            </option>
+                                        </c:forEach>
+                                    </select>
+                                    <button type="submit" class="btn-add" style="padding: 8px 16px; border: none; cursor: pointer;">Save</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </c:forEach>
+                    <c:if test="${empty tripList}">
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 40px; color: #6b7280;">No trips found in the database.</td>
+                        </tr>
+                    </c:if>
+                </tbody>
+            </table>
+        </div>
     </body>
 </html>

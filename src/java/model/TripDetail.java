@@ -23,6 +23,9 @@ public class TripDetail {
     private String busType;
     private int totalSeats;
     private int bookedSeats;
+    private int driverId;
+    private String driverName;
+    private int tripId;
 
     // Default constructor
     public TripDetail() {
@@ -107,5 +110,29 @@ public class TripDetail {
 
     public void setBookedSeats(int bookedSeats) {
         this.bookedSeats = bookedSeats;
+    }
+
+    public int getDriverId() {
+        return driverId;
+    }
+
+    public void setDriverId(int driverId) {
+        this.driverId = driverId;
+    }
+
+    public String getDriverName() {
+        return driverName;
+    }
+
+    public void setDriverName(String driverName) {
+        this.driverName = driverName;
+    }
+
+    public int getTripId() {
+        return tripId;
+    }
+
+    public void setTripId(int tripId) {
+        this.tripId = tripId;
     }
 }
