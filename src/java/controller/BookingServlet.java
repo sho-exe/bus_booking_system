@@ -77,12 +77,11 @@ public class BookingServlet extends HttpServlet {
                     b.setSeat(Integer.parseInt(seats[i]));
                     b.setTripId(tripId);
 
-                   // b.setPassengerId(passengerId);
-                   // b.setUserId(0);
+                    // b.setPassengerId(passengerId);
+                    // b.setUserId(0);
 
                     b.setPassengerId(userId); // passenger_id = logged-in user id
                     b.setUserId(userId); // user_id = logged-in user id
-
 
                     bookingDAO.addBooking(b);
                 }
