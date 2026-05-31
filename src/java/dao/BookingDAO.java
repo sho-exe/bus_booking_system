@@ -87,7 +87,10 @@ public class BookingDAO {
 
     public List<Booking> getAllBookings() {
         List<Booking> bookings = new ArrayList<>();
-        String sql = "SELECT * FROM Booking ORDER BY booking_date DESC";
+        String sql = "SELECT b.*, p.name AS passenger_name, p.age AS passenger_age "
+                   + "FROM Booking b "
+                   + "LEFT JOIN Passenger p ON b.passenger_id = p.passenger_id "
+                   + "ORDER BY b.booking_date DESC";
         try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
@@ -99,6 +102,8 @@ public class BookingDAO {
                         rs.getInt("trip_id"),
                         rs.getInt("user_id"),
                         rs.getInt("seat"));
+                b.setPassengerName(rs.getString("passenger_name"));
+                b.setPassengerAge(rs.getInt("passenger_age"));
                 bookings.add(b);
             }
         } catch (SQLException e) {

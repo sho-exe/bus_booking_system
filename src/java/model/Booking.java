@@ -14,6 +14,9 @@ public class Booking {
     private int tripId;
     private int userId;
     private int seat;
+    // Extra fields populated by admin JOIN query
+    private String passengerName;
+    private int    passengerAge;
 
     public Booking() {
     }
@@ -84,5 +87,21 @@ public class Booking {
 
     public void setSeat(int seat) {
         this.seat = seat;
+    }
+
+    public String getPassengerName() {
+        return passengerName;
+    }
+
+    public void setPassengerName(String passengerName) {
+        this.passengerName = passengerName;
+    }
+
+    public int getPassengerAge() {
+        return passengerAge;
+    }
+
+    public void setPassengerAge(int passengerAge) {
+        this.passengerAge = passengerAge;
     }
 }
