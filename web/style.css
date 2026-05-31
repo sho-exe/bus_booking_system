@@ -189,6 +189,8 @@ body {
     align-items: center;
     gap: 8px;
     transition: background-color 0.2s;
+    text-decoration: none;
+    
 }
 
 .btn-submit:hover,
@@ -432,4 +434,147 @@ body {
 
 .btn-select:hover {
     background-color: #b01e1e;
+}
+/* ── profile.jsp ─────────────────────────────────────────── */
+
+/* Tab navigation */
+.tab-nav-top {
+    margin-top: 20px;
+}
+
+/* "Login Required" card */
+.login-required-card {
+    background: #fff8e1;
+    border-color: #ffe082;
+    margin-top: 20px;
+    text-align: center;
+    padding: 40px 20px;
+    justify-content: center;
+}
+
+.login-required-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-required-icon {
+    font-size: 2.5rem;
+    color: #f9a825;
+    margin-bottom: 16px;
+}
+
+.login-required-title {
+    margin: 0 0 8px;
+    color: #5d4037;
+}
+
+.login-required-text {
+    margin: 0 0 20px;
+    color: #795548;
+}
+
+.btn-login-now {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+}
+
+/* Success / error alert cards */
+.alert-card-success {
+    background: #e8f5e9;
+    border-color: #a5d6a7;
+    margin-top: 20px;
+}
+
+.alert-card-success p {
+    margin: 0;
+    color: #2e7d32;
+    font-weight: 600;
+}
+
+.alert-card-error {
+    background: #fdecea;
+    border-color: #ef9a9a;
+    margin-top: 20px;
+}
+
+.alert-card-error p {
+    margin: 0;
+    color: #c62828;
+    font-weight: 600;
+}
+
+/* Profile search card */
+.profile-card {
+    margin-top: 20px;
+}
+
+/* Identity strip */
+.identity-strip {
+    margin-bottom: 25px;
+}
+
+/* ── header.jsp ──────────────────────────────────────────── */
+
+.top-header {
+    background-color: #cc2525;
+    color: white;
+    padding: 15px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.header-branding h1 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.header-branding p {
+    margin: 2px 0 0 0;
+    font-size: 13px;
+    font-weight: 300;
+}
+
+.header-action-btn {
+    background-color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 6px;
+    cursor: pointer;
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+}
+
+/* ── customer.jsp ────────────────────────────────────────── */
+
+/* "No bookings" empty state card */
+.no-bookings-card {
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 40px;
+    text-align: center;
+}
+
+.no-bookings-card i {
+    font-size: 40px;
+    color: #ddd;
+}
+
+.no-bookings-card p {
+    color: #999;
+    margin: 0;
+}
+
+.no-bookings-card a {
+    color: #cc2525;
+    font-weight: 600;
 }
