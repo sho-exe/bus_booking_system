@@ -36,21 +36,36 @@ public class BookingServlet extends HttpServlet {
     private void searchTrips(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String origin = request.getParameter("origin");
-        String destination = request.getParameter("destination");
+        String origin       = request.getParameter("origin");
+        String destination  = request.getParameter("destination");
         String departure_date = request.getParameter("trip_date");
+        String return_date  = request.getParameter("return_date");
 
-        // Get data from Trip Table
+        // ── Outbound trips ──────────────────────────────────────────
         List<Trip> trips = new TripDAO().searchTrips(origin, destination, departure_date);
         request.setAttribute("trips", trips);
 
         List<Bus> busList = new ArrayList<>();
-        // Get data from Bus Table
         for (Trip t : trips) {
             Bus b = new BusDAO().selectBus(t.getBusId());
             busList.add(b);
         }
         request.setAttribute("busList", busList);
+
+        // ── Return trips (only if return_date was provided) ─────────
+        if (return_date != null && !return_date.trim().isEmpty()) {
+            // Swap origin <-> destination for the return leg
+            List<Trip> returnTrips = new TripDAO().searchTrips(destination, origin, return_date);
+            request.setAttribute("returnTrips", returnTrips);
+
+            List<Bus> returnBusList = new ArrayList<>();
+            for (Trip t : returnTrips) {
+                Bus b = new BusDAO().selectBus(t.getBusId());
+                returnBusList.add(b);
+            }
+            request.setAttribute("returnBusList", returnBusList);
+            request.setAttribute("returnDate", return_date);
+        }
 
         request.getRequestDispatcher("/Booking.jsp").forward(request, response);
     }
@@ -87,7 +102,33 @@ public class BookingServlet extends HttpServlet {
                 }
             }
 
-            response.sendRedirect("customer.jsp");
+            // ── After outbound booking: redirect to return trip seat selection if round-trip ──
+            String returnTripId   = request.getParameter("return_trip_id");
+            String returnBusId    = request.getParameter("return_bus_id");
+            String returnOrigin   = request.getParameter("return_origin");
+            String returnDest     = request.getParameter("return_destination");
+            String returnDate     = request.getParameter("return_date");
+            String returnPrice    = request.getParameter("return_price");
+
+            if (returnTripId != null && !returnTripId.isEmpty()) {
+                // Clear return trip from session so it doesn't persist into future bookings
+                request.getSession().removeAttribute("return_trip_id");
+
+                // Redirect to SelectSeat.jsp pre-filled with the return trip details
+                int reqSeats = (seats != null) ? seats.length : 0;
+                String redirectUrl = "SelectSeat.jsp"
+                        + "?trip_id="     + returnTripId
+                        + "&bus_id="      + returnBusId
+                        + "&origin="      + java.net.URLEncoder.encode(returnOrigin, "UTF-8")
+                        + "&destination=" + java.net.URLEncoder.encode(returnDest,   "UTF-8")
+                        + "&trip_date="   + java.net.URLEncoder.encode(returnDate,   "UTF-8")
+                        + "&price="       + returnPrice
+                        + "&is_return=true"
+                        + "&req_seats="   + reqSeats;
+                response.sendRedirect(redirectUrl);
+            } else {
+                response.sendRedirect("customer.jsp");
+            }
         } else {
             response.sendRedirect("Booking.jsp");
         }

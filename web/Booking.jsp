@@ -19,15 +19,16 @@
 
                     <% String origin=request.getParameter("origin"); String
                         destination=request.getParameter("destination"); String
-                        trip_date=request.getParameter("trip_date"); %>
+                        trip_date=request.getParameter("trip_date"); String
+                        return_date=request.getParameter("return_date");%>
 
                         <jsp:include page="header.jsp" />
 
                         <!--        
-        <h1><%=session.getAttribute("username")%></h1>
-                <h1><%=session.getAttribute("email")%></h1>
-        <h1><%=session.getAttribute("phoneNumber")%></h1>
-         <h1><%=session.getAttribute("passengerId")%></h1>-->
+<h1><%=session.getAttribute("username")%></h1>
+<h1><%=session.getAttribute("email")%></h1>
+<h1><%=session.getAttribute("phoneNumber")%></h1>
+<h1><%=session.getAttribute("passengerId")%></h1>-->
 
 
                         <div class="main-container">
@@ -93,12 +94,13 @@
                                                     value="<%= (trip_date != null) ? trip_date : ""%>" required>
                                             </div>
                                         </div>
-                                            
-                                             <div class="form-group">
+
+                                        <div class="form-group">
                                             <label>Returning Date (Optional)</label>
                                             <div class="input-wrapper">
                                                 <i class="fa-regular fa-calendar"></i>
-                                                <input type="date" name="return_date" class="form-control">
+                                                <input type="date" name="return_date" class="form-control"
+                                                    value="<%= (return_date != null) ? return_date : ""%>">
                                             </div>
                                         </div>
 
@@ -111,61 +113,269 @@
                             </div>
 
                             <% if (origin !=null && !origin.isEmpty()) {%>
-                                <div class="results-container">
-                                    <h2 class="section-title" style="margin-top: 30px;">Available Trips for <%=
-                                            trip_date%>
-                                    </h2>
+                                <form action="SelectSeat.jsp" method="POST" id="tripSelectionForm">
+                                    <input type="hidden" name="trip_id" id="out_trip_id">
+                                    <input type="hidden" name="bus_id" id="out_bus_id">
+                                    <input type="hidden" name="origin" id="out_origin">
+                                    <input type="hidden" name="destination" id="out_destination">
+                                    <input type="hidden" name="trip_date" id="out_trip_date">
+                                    <input type="hidden" name="price" id="out_price">
+
+                                    <input type="hidden" name="return_trip_id" id="ret_trip_id">
+                                    <input type="hidden" name="return_bus_id" id="ret_bus_id">
+                                    <input type="hidden" name="return_origin" id="ret_origin">
+                                    <input type="hidden" name="return_destination" id="ret_destination">
+                                    <input type="hidden" name="return_date" id="ret_date">
+                                    <input type="hidden" name="return_price" id="ret_price">
+
+                                    <div class="results-container">
+                                        <h2 class="section-title" style="margin-top: 30px;">Available Trips for
+                                            <%=trip_date%>
+                                        </h2>
 
 
-                                </div>
-                                <% }%>
+                                    </div>
+                                    <% }%>
 
-                                    <% if (request.getAttribute("trips") !=null && request.getAttribute("busList")
-                                        !=null) { List<Trip> trips = (List<Trip>) request.getAttribute("trips");
-                                            List<Bus> busList = (List<Bus>) request.getAttribute("busList");
+                                        <% if (request.getAttribute("trips") !=null && request.getAttribute("busList")
+                                            !=null) { List<Trip> trips = (List<Trip>) request.getAttribute("trips");
+                                                List<Bus> busList = (List<Bus>) request.getAttribute("busList");
 
-                                                    // Use a counter to stay in sync with the bus list
-                                                    for (int i = 0; i < trips.size(); i++) { Trip t=trips.get(i); Bus
-                                                        b=busList.get(i); // This gets the matching bus for this trip %>
-                                                        <div class="trip-card">
-                                                            <div class="trip-info">
-                                                                <h3>
-                                                                    <%= t.getDepartureTime()%>
-                                                                </h3>
-                                                                <p class="route">
-                                                                    <%= t.getOrigin()%> &rarr; <%= t.getDestination()%>
-                                                                </p>
+                                                        // Use a counter to stay in sync with the bus list
+                                                        for (int i = 0; i < trips.size(); i++) { Trip t=trips.get(i);
+                                                            Bus b=busList.get(i); // This gets the matching bus for this trip %>
+                                                            <div class="trip-card">
+                                                                <div class="trip-info">
+                                                                    <h3>
+                                                                        <%= t.getDepartureTime()%>
+                                                                    </h3>
+                                                                    <p class="route">
+                                                                        <%= t.getOrigin()%> &rarr; <%=
+                                                                                t.getDestination()%>
+                                                                    </p>
 
-                                                                <p class="bus-type">
-                                                                    <%= b.getBusType() %> • <%= b.getBusNumber() %> •
-                                                                            <%= b.getTotalSeats() %> Seats Total
-                                                                </p>
-                                                            </div>
-
-                                                            <div class="trip-action">
-                                                                <div class="price">RM <%= t.getPrice()%>
+                                                                    <p class="bus-type">
+                                                                        <%= b.getBusType()%> • <%= b.getBusNumber()%> •
+                                                                                <%= b.getTotalSeats()%> Seats Total
+                                                                    </p>
                                                                 </div>
-                                                                <form action="SelectSeat.jsp" method="POST">
-                                                                    <input type="hidden" name="trip_id"
-                                                                        value="<%= t.getTripId()%>">
-                                                                    <input type="hidden" name="bus_id"
-                                                                        value="<%= b.getBusId()%>">
-                                                                    <input type="hidden" name="origin"
-                                                                        value="<%= t.getOrigin()%>">
-                                                                    <input type="hidden" name="destination"
-                                                                        value="<%= t.getDestination()%>">
-                                                                    <input type="hidden" name="trip_date"
-                                                                        value="<%= t.getDepartureTime()%>">
-                                                                    <input type="hidden" name="price"
-                                                                        value="<%= t.getPrice()%>">
-                                                                    <button type="submit" class="btn-select">Select
-                                                                        Seat</button>
-                                                                </form>
+
+                                                                <div class="trip-action">
+                                                                    <div class="price">RM <%= t.getPrice()%>
+                                                                    </div>
+                                                                    <button type="button" class="btn-select out-btn"
+                                                                        onclick="selectOutbound('<%= t.getTripId()%>', '<%= b.getBusId()%>', '<%= t.getOrigin()%>', '<%= t.getDestination()%>', '<%= t.getDepartureTime()%>', '<%= t.getPrice()%>', '<%= b.getBusNumber()%>', this)">
+                                                                        Select
+                                                                    </button>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                        <% } } %>
+                                                            <% } } %>
+
+                                                                <%-- ── RETURN TRIPS SECTION
+                                                                    ─────────────────────────────── --%>
+                                                                    <% if (request.getAttribute("returnTrips") !=null &&
+                                                                        request.getAttribute("returnBusList") !=null) {
+                                                                        List<Trip> returnTrips = (List<Trip>)
+                                                                            request.getAttribute("returnTrips");
+                                                                            List<Bus> returnBusList = (List<Bus>)
+                                                                                    request.getAttribute("returnBusList");
+                                                                                    String returnDateVal = (String)
+                                                                                    request.getAttribute("returnDate");
+                                                                                    %>
+                                                                                    <div class="results-container">
+                                                                                        <div
+                                                                                            style="display:flex; align-items:center; gap:10px; margin-top:36px; margin-bottom:16px;">
+                                                                                            <div
+                                                                                                style="flex:1; height:1px; background:#eee;">
+                                                                                            </div>
+                                                                                            <span style="background:#fef2f2; color:#cc2525; border:1px solid #fca5a5;
+                              padding:6px 16px; border-radius:20px; font-size:13px; font-weight:700;
+                              white-space:nowrap;">
+                                                                                                <i
+                                                                                                    class="fa-solid fa-rotate-left"></i>&nbsp;
+                                                                                                Return Trip
+                                                                                            </span>
+                                                                                            <div
+                                                                                                style="flex:1; height:1px; background:#eee;">
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <h2 class="section-title">Return
+                                                                                            Trips for <%=
+                                                                                                returnDateVal%>
+                                                                                        </h2>
+                                                                                    </div>
+
+                                                                                    <% if (returnTrips.isEmpty()) { %>
+                                                                                        <div style="text-align:center; padding:32px; background:#fdfdfd; border:1px solid #f0f0f0;
+                     border-radius:18px; color:#999; font-size:14px;">
+                                                                                            <i class="fa-solid fa-circle-info"
+                                                                                                style="font-size:24px; color:#ddd; display:block; margin-bottom:10px;"></i>
+                                                                                            No return trips found for
+                                                                                            this date.
+                                                                                        </div>
+                                                                                        <% } else { for (int i=0; i <
+                                                                                            returnTrips.size(); i++) {
+                                                                                            Trip rt=returnTrips.get(i);
+                                                                                            Bus rb=returnBusList.get(i);
+                                                                                            %>
+                                                                                            <div class="trip-card">
+                                                                                                <div class="trip-info">
+                                                                                                    <h3>
+                                                                                                        <%=
+                                                                                                            rt.getDepartureTime()%>
+                                                                                                    </h3>
+                                                                                                    <p class="route">
+                                                                                                        <%=
+                                                                                                            rt.getOrigin()%>
+                                                                                                            &rarr; <%=
+                                                                                                                rt.getDestination()%>
+                                                                                                    </p>
+                                                                                                    <p class="bus-type">
+                                                                                                        <%=
+                                                                                                            rb.getBusType()%>
+                                                                                                            &bull; <%=
+                                                                                                                rb.getBusNumber()%>
+                                                                                                                &bull;
+                                                                                                                <%=
+                                                                                                                    rb.getTotalSeats()%>
+                                                                                                                    Seats
+                                                                                                                    Total
+                                                                                                    </p>
+                                                                                                </div>
+                                                                                                <div
+                                                                                                    class="trip-action">
+                                                                                                    <div class="price">
+                                                                                                        RM <%=
+                                                                                                            rt.getPrice()%>
+                                                                                                    </div>
+                                                                                                    <button
+                                                                                                        type="button"
+                                                                                                        class="btn-select ret-btn"
+                                                                                                        onclick="selectReturn('<%= rt.getTripId()%>', '<%= rb.getBusId()%>', '<%= rt.getOrigin()%>', '<%= rt.getDestination()%>', '<%= rt.getDepartureTime()%>', '<%= rt.getPrice()%>', '<%= rb.getBusNumber()%>', this)">
+                                                                                                        Select
+                                                                                                    </button>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <% } } %>
+                                                                                                <% } %>
+
+                                                                                                    <% boolean
+                                                                                                        isRoundTrip=request.getAttribute("returnTrips")
+                                                                                                        !=null;%>
+
+                                                                                                        <div id="proceedContainer"
+                                                                                                            style="display: none; align-items: center; justify-content: space-between; margin-top: 30px; padding: 20px; background: #fff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: sticky; bottom: 20px; z-index: 100;">
+                                                                                                            <div id="selectionInfo"
+                                                                                                                style="text-align: left; font-size: 14px; color: #555;">
+                                                                                                                <!-- Selected trip info will be placed here -->
+                                                                                                            </div>
+                                                                                                            
+                                                                                                            <button
+                                                                                                                type="button"
+                                                                                                                class="btn-submit"
+                                                                                                                id="proceedBtn"
+                                                                                                                onclick="validateAndProceed(<%= isRoundTrip%>)"
+                                                                                                                style="width: auto; padding: 15px 40px; font-size: 16px; margin: 0;">
+                                                                                                                Proceed
+                                                                                                                to Seat
+                                                                                                                Selection
+                                                                                                                <i class="fa-solid fa-arrow-right"
+                                                                                                                    style="margin-left: 10px;"></i>
+                                                                                                            </button>
+                                                                                                        </div>
+
+                                </form>
+
                         </div>
 
+                        <script>
+                            let outInfoStr = '';
+                            let retInfoStr = '';
+
+                            function selectOutbound(tripId, busId, origin, dest, date, price, busNumber, btnElem) {
+                                document.getElementById('out_trip_id').value = tripId;
+                                document.getElementById('out_bus_id').value = busId;
+                                document.getElementById('out_origin').value = origin;
+                                document.getElementById('out_destination').value = dest;
+                                document.getElementById('out_trip_date').value = date;
+                                document.getElementById('out_price').value = price;
+
+                                outInfoStr = `Outbound: ${date} (Bus: ${busNumber})`;
+
+                                document.querySelectorAll('.out-btn').forEach(btn => {
+                                    btn.innerHTML = 'Select';
+                                    btn.style.backgroundColor = '#cc2525';
+                                    btn.closest('.trip-card').style.borderLeft = 'none';
+                                });
+
+                                btnElem.innerHTML = '<i class="fa-solid fa-check"></i> Selected';
+                                btnElem.style.backgroundColor = '#2e7d32';
+
+                                checkProceedVisibility();
+                            }
+
+                            function selectReturn(tripId, busId, origin, dest, date, price, busNumber, btnElem) {
+                                document.getElementById('ret_trip_id').value = tripId;
+                                document.getElementById('ret_bus_id').value = busId;
+                                document.getElementById('ret_origin').value = origin;
+                                document.getElementById('ret_destination').value = dest;
+                                document.getElementById('ret_date').value = date;
+                                document.getElementById('ret_price').value = price;
+
+                                retInfoStr = `Return: ${date} (Bus: ${busNumber})`;
+
+                                document.querySelectorAll('.ret-btn').forEach(btn => {
+                                    btn.innerHTML = 'Select';
+                                    btn.style.backgroundColor = '#cc2525';
+                                });
+
+                                btnElem.innerHTML = '<i class="fa-solid fa-check"></i> Selected';
+                                btnElem.style.backgroundColor = '#2e7d32';
+
+                                checkProceedVisibility();
+                            }
+
+                            function checkProceedVisibility() {
+                                const outTrip = document.getElementById('out_trip_id').value;
+                                const retTrip = document.getElementById('ret_trip_id').value;
+                                const isRoundTrip = document.querySelector('.ret-btn') !== null;
+                                const container = document.getElementById('proceedContainer');
+                                const infoDiv = document.getElementById('selectionInfo');
+
+                                let infoHtml = '';
+                                if (outTrip) {
+//                                    infoHtml += `<div style="font-weight: 600; color: #333;"><i class="fa-solid fa-arrow-right" style="color: #cc2525;"></i> ${outInfoStr}</div>`;
+                                }
+                                if (retTrip) {
+//                                    infoHtml += `<div style="font-weight: 600; color: #333; margin-top: 8px;"><i class="fa-solid fa-arrow-left" style="color: #cc2525;"></i> ${retInfoStr}</div>`;
+                                }
+                                infoDiv.innerHTML = infoHtml;
+
+                                if (isRoundTrip) {
+                                    if (outTrip && retTrip)
+                                        container.style.display = 'flex';
+                                } else {
+                                    if (outTrip)
+                                        container.style.display = 'flex';
+                                }
+                            }
+
+                            function validateAndProceed(isRoundTrip) {
+                                const outTrip = document.getElementById('out_trip_id').value;
+                                const retTrip = document.getElementById('ret_trip_id').value;
+
+                                if (!outTrip) {
+                                    alert('Please select an outbound trip.');
+                                    return;
+                                }
+                                if (isRoundTrip && !retTrip) {
+                                    alert('Please select a return trip.');
+                                    return;
+                                }
+
+                                document.getElementById('tripSelectionForm').submit();
+                            }
+                        </script>
         </body>
 
         </html>

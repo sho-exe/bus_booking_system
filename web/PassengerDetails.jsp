@@ -23,6 +23,7 @@
         double pricePerSeat = Double.parseDouble(price);
         double totalPrice = seatCount * pricePerSeat;
         session.setAttribute("total_price", totalPrice);
+        Double accumulatedPrice = (Double) session.getAttribute("accumulated_price");
     %>
 
     <div class="main-container">
@@ -43,6 +44,16 @@
             <input type="hidden" name="trip_date" value="<%= (tripDate != null) ? tripDate : "" %>">
             <input type="hidden" name="total_price" id="hidden_total_price" value="<%= totalPrice %>">
             <input type="hidden" name="trip_id" value="<%= session.getAttribute("trip_id") %>">
+            <%-- Forward return trip id so BookingServlet can redirect to return seat selection --%>
+            <% String sessionRetTripId = (String) session.getAttribute("return_trip_id"); %>
+            <% if (sessionRetTripId != null && !sessionRetTripId.isEmpty()) { %>
+            <input type="hidden" name="return_trip_id"    value="<%= sessionRetTripId %>">
+            <input type="hidden" name="return_bus_id"     value="<%= session.getAttribute("return_bus_id") %>">
+            <input type="hidden" name="return_origin"     value="<%= session.getAttribute("return_origin") %>">
+            <input type="hidden" name="return_destination" value="<%= session.getAttribute("return_destination") %>">
+            <input type="hidden" name="return_date"       value="<%= session.getAttribute("return_date") %>">
+            <input type="hidden" name="return_price"      value="<%= session.getAttribute("return_price") %>">
+            <% } %>
 
             <div class="layout-grid">
 
@@ -83,8 +94,14 @@
                     <h2 class="section-title">Passenger Details</h2>
 
                     <%
+                        String[] outNames = (String[]) session.getAttribute("outbound_passenger_names");
+                        String[] outAges = (String[]) session.getAttribute("outbound_passenger_ages");
+
                         if (selectedSeats != null && selectedSeats.length > 0) {
-                            for (String seat : selectedSeats) {
+                            for (int i = 0; i < selectedSeats.length; i++) {
+                                String seat = selectedSeats[i];
+                                String prefillName = (outNames != null && outNames.length > i && outNames[i] != null) ? outNames[i] : "";
+                                String prefillAge = (outAges != null && outAges.length > i && outAges[i] != null) ? outAges[i] : "";
                     %>
                     <div class="trip-card">
                         <div class="trip-info" style="width: 100%;">
@@ -100,7 +117,7 @@
                                     <div class="input-wrapper">
                                         <i class="fa-regular fa-id-badge"></i>
                                         <input type="text" name="passenger_name" class="form-control"
-                                            placeholder="Enter full name" required>
+                                            placeholder="Enter full name" value="<%= prefillName %>" required>
                                     </div>
                                 </div>
 
@@ -112,6 +129,7 @@
                                             placeholder="Enter age" min="1" max="120"
                                             data-seat='<%= seat.trim() %>'
                                             oninput="handleAgeInput(this)"
+                                            value="<%= prefillAge %>"
                                             required>
                                     </div>
                                     <div id='age-msg-<%= seat.trim() %>'></div>
@@ -169,9 +187,25 @@
 
                     <div class="divider"></div>
 
+                    <% if (accumulatedPrice != null) { %>
+                    <div class="summary-row" style="font-weight: 600;">
+                        <span>Outbound Trip Total:</span>
+                        <span>RM<%= String.format("%.2f", accumulatedPrice) %></span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Return Trip Subtotal:</span>
+                        <span id="display-return-subtotal">RM<%= String.format("%.2f", totalPrice) %></span>
+                    </div>
+                    <div class="summary-row" style="color: #2e7d32; font-weight: 600;">
+                        <span>Round Trip Discount (10%):</span>
+                        <span id="display-discount">-RM<%= String.format("%.2f", (accumulatedPrice + totalPrice) * 0.1) %></span>
+                    </div>
+                    <div class="divider"></div>
+                    <% } %>
+
                     <div class="total-row">
-                        <span>Total:</span>
-                        <span class="total-price" id="display-total">RM<%= String.format("%.2f", totalPrice) %></span>
+                        <span>Final Total:</span>
+                        <span class="total-price" id="display-total">RM<%= String.format("%.2f", accumulatedPrice != null ? (accumulatedPrice + totalPrice) * 0.9 : totalPrice) %></span>
                     </div>
 
                     <button type="submit" class="btn-payment">Proceed to Complete Booking</button>
@@ -233,9 +267,32 @@ const seatAges = {};
                 const data = seatAges[seat];
                 total += (data && data.discount) ? pricePerSeat * 0.5 : pricePerSeat;
             });
-            document.getElementById('display-total').textContent = 'RM ' + total.toFixed(2);
+            
+            const hasAccumulated = <%= accumulatedPrice != null %>;
+            if (hasAccumulated) {
+                const accumulated = <%= accumulatedPrice != null ? accumulatedPrice : 0.0 %>;
+                document.getElementById('display-return-subtotal').textContent = 'RM' + total.toFixed(2);
+                
+                const discount = (accumulated + total) * 0.1;
+                document.getElementById('display-discount').textContent = '-RM' + discount.toFixed(2);
+                
+                const finalTotal = (accumulated + total) * 0.9;
+                document.getElementById('display-total').textContent = 'RM' + finalTotal.toFixed(2);
+            } else {
+                document.getElementById('display-total').textContent = 'RM' + total.toFixed(2);
+            }
+            
             document.getElementById('hidden_total_price').value = total.toFixed(2);
         }
+
+        // Trigger validation on load to apply any pre-filled discounts
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('input[name="passenger_age"]').forEach(input => {
+                if (input.value) {
+                    handleAgeInput(input);
+                }
+            });
+        });
     </script>
 
 </body>

@@ -203,9 +203,63 @@ booker_phone: <%= request.getParameter("booker_phone")%>
         </pre>
 
             <%-- Redirect only after all output is done --%>
-                <% if (insertSuccess) { %>
+                <% if (insertSuccess) { 
+                    String returnTripId = request.getParameter("return_trip_id");
+                    
+                    // Read the discounted total price computed by Javascript on the client side
+                    String reqTotalStr = request.getParameter("total_price");
+                    Double currentTotal = (reqTotalStr != null && !reqTotalStr.isEmpty()) ? Double.parseDouble(reqTotalStr) : 0.0;
+
+                    if (returnTripId != null && !returnTripId.isEmpty()) {
+                        // It's the outbound leg of a round trip. Accumulate the price.
+                        session.setAttribute("accumulated_price", currentTotal);
+                        
+                        // Save passenger details to pre-fill the return trip
+                        session.setAttribute("outbound_passenger_names", names);
+                        session.setAttribute("outbound_passenger_ages", ages);
+                        
+                        // Clear the return trip id from session so we don't loop
+                        session.removeAttribute("return_trip_id");
+                        
+                        String[] selectedSeatsArr = request.getParameterValues("seat_number");
+                        int reqSeats = (selectedSeatsArr != null) ? selectedSeatsArr.length : 0;
+                        
+                        String returnBusId = request.getParameter("return_bus_id");
+                        String returnOrigin = request.getParameter("return_origin");
+                        String returnDest = request.getParameter("return_destination");
+                        String returnDate = request.getParameter("return_date");
+                        String returnPrice = request.getParameter("return_price");
+                        
+                        String redirectUrl = "SelectSeat.jsp"
+                                + "?trip_id=" + returnTripId
+                                + "&bus_id=" + returnBusId
+                                + "&origin=" + java.net.URLEncoder.encode(returnOrigin != null ? returnOrigin : "", "UTF-8")
+                                + "&destination=" + java.net.URLEncoder.encode(returnDest != null ? returnDest : "", "UTF-8")
+                                + "&trip_date=" + java.net.URLEncoder.encode(returnDate != null ? returnDate : "", "UTF-8")
+                                + "&price=" + returnPrice
+                                + "&is_return=true"
+                                + "&req_seats=" + reqSeats;
+                %>
+                    <script>window.location.href = "<%= redirectUrl %>";</script>
+                <%  } else { 
+                        // End of round trip, or a one-way trip.
+                        Double accumulated = (Double) session.getAttribute("accumulated_price");
+                        if (accumulated != null) {
+                            Double subtotal = accumulated + currentTotal;
+                            Double discountedTotal = subtotal * 0.90;
+                            session.setAttribute("total_price", discountedTotal);
+                            session.removeAttribute("accumulated_price");
+                        } else {
+                            session.setAttribute("total_price", currentTotal);
+                        }
+                        
+                        // Clear the saved passenger details
+                        session.removeAttribute("outbound_passenger_names");
+                        session.removeAttribute("outbound_passenger_ages");
+                %>
                     <script>window.location.href = "createPayment.jsp";</script>
-                    <% }%>
+                <%  }
+                   } %>
         </body>
 
         </html>

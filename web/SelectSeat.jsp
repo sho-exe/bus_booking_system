@@ -13,11 +13,37 @@
 
     <body>
 
-        <% String trip_id=(String) session.getAttribute("trip_id"); String origin=request.getParameter("origin"); String
-            destination=request.getParameter("destination"); String trip_date=request.getParameter("trip_date"); String
-            price=request.getParameter("price"); if (origin !=null) { session.setAttribute("origin", origin);
-            session.setAttribute("destination", destination); session.setAttribute("trip_date", trip_date);
-            session.setAttribute("price", price); } %>
+        <% String trip_id=(String) session.getAttribute("trip_id");
+            String origin=request.getParameter("origin");
+            String destination=request.getParameter("destination");
+            String trip_date=request.getParameter("trip_date");
+            String price=request.getParameter("price");
+            if (origin != null) {
+                session.setAttribute("origin", origin);
+                session.setAttribute("destination", destination);
+                session.setAttribute("trip_date", trip_date);
+                session.setAttribute("price", price);
+            }
+
+            // ── Store return trip details in session (if this is a round-trip) ──
+            String retTripId   = request.getParameter("return_trip_id");
+            String retBusId    = request.getParameter("return_bus_id");
+            String retOrigin   = request.getParameter("return_origin");
+            String retDest     = request.getParameter("return_destination");
+            String retDate     = request.getParameter("return_date");
+            String retPrice    = request.getParameter("return_price");
+            if (retTripId != null && !retTripId.isEmpty()) {
+                session.setAttribute("return_trip_id",    retTripId);
+                session.setAttribute("return_bus_id",     retBusId);
+                session.setAttribute("return_origin",     retOrigin);
+                session.setAttribute("return_destination", retDest);
+                session.setAttribute("return_date",       retDate);
+                session.setAttribute("return_price",      retPrice);
+            } else {
+                // One-way trip: clear any stale return data from a previous search
+                session.removeAttribute("return_trip_id");
+            }
+        %>
             <jsp:include page="header.jsp" />
 
             <div class="main-container">
@@ -243,16 +269,37 @@
                                         .00</span>
                             </div>
 
-                            <button type="submit" class="btn-payment" onclick="alertSeats()">Fill Passengers
+                            <button type="button" class="btn-payment" onclick="validateSeatsAndSubmit()">Fill Passengers
                                 Details</button>
                         </div>
 
                     </div>
                 </form>
+                
+                <% String reqSeatsStr = request.getParameter("req_seats"); %>
 
             </div>
 
             <script>
+                const requiredSeats = <%= (reqSeatsStr != null && !reqSeatsStr.isEmpty()) ? reqSeatsStr : "null" %>;
+
+                function validateSeatsAndSubmit() {
+                    const selectedSeats = document.querySelectorAll('.seat-checkbox:checked');
+                    const count = selectedSeats.length;
+
+                    if (count === 0) {
+                        alert("Please select at least one seat.");
+                        return;
+                    }
+
+                    if (requiredSeats !== null && count !== requiredSeats) {
+                        alert("For your return trip, you must select exactly " + requiredSeats + " seat(s) to match your outbound booking.");
+                        return;
+                    }
+
+                    // If validation passes, submit the form
+                    document.querySelector('form').submit();
+                }
                 document.addEventListener('DOMContentLoaded', function () {
                     const pricePerSeat = <%= session.getAttribute("price") %>;
 
