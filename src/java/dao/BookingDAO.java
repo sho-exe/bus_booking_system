@@ -87,7 +87,7 @@ public class BookingDAO {
 
     public List<Booking> getAllBookings() {
         List<Booking> bookings = new ArrayList<>();
-        String sql = "SELECT booking_id, booking_date, status, passenger_id, trip_id, staff_id, seat FROM Booking ORDER BY booking_date DESC";
+        String sql = "SELECT * FROM Booking ORDER BY booking_date DESC";
         try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
@@ -97,7 +97,7 @@ public class BookingDAO {
                         rs.getString("status"),
                         rs.getInt("passenger_id"),
                         rs.getInt("trip_id"),
-                        rs.getInt("staff_id"),
+                        rs.getInt("user_id"),
                         rs.getInt("seat"));
                 bookings.add(b);
             }

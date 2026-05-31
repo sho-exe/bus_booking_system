@@ -13,41 +13,76 @@ public class Booking {
     private int passengerId;
     private int tripId;
     private int userId;
-
     private int seat;
 
-    public Booking() {}
+    public Booking() {
+    }
 
     public Booking(int bookingId, Timestamp bookingDate, String status,
-                   int passengerId, int tripId, int userId, int seat) {
-        this.bookingId   = bookingId;
+            int passengerId, int tripId, int userId, int seat) {
+        this.bookingId = bookingId;
         this.bookingDate = bookingDate;
-        this.status      = status;
+        this.status = status;
         this.passengerId = passengerId;
-        this.tripId      = tripId;
-        this.userId     = userId;
-        this.seat        = seat;
+        this.tripId = tripId;
+        this.userId = userId;
+        this.seat = seat;
     }
 
     // Getters and Setters
-    public int getBookingId() { return bookingId; }
-    public void setBookingId(int bookingId) { this.bookingId = bookingId; }
+    public int getBookingId() {
+        return bookingId;
+    }
 
-    public Timestamp getBookingDate() { return bookingDate; }
-    public void setBookingDate(Timestamp bookingDate) { this.bookingDate = bookingDate; }
+    public void setBookingId(int bookingId) {
+        this.bookingId = bookingId;
+    }
 
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public Timestamp getBookingDate() {
+        return bookingDate;
+    }
 
-    public int getPassengerId() { return passengerId; }
-    public void setPassengerId(int passengerId) { this.passengerId = passengerId; }
+    public void setBookingDate(Timestamp bookingDate) {
+        this.bookingDate = bookingDate;
+    }
 
-    public int getTripId() { return tripId; }
-    public void setTripId(int tripId) { this.tripId = tripId; }
+    public String getStatus() {
+        return status;
+    }
 
-    public int getUserId() { return userId; }
-    public void setUserId(int staffId) { this.userId = staffId; }
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-    public int getSeat() { return seat; }
-    public void setSeat(int seat) { this.seat = seat; }
+    public int getPassengerId() {
+        return passengerId;
+    }
+
+    public void setPassengerId(int passengerId) {
+        this.passengerId = passengerId;
+    }
+
+    public int getTripId() {
+        return tripId;
+    }
+
+    public void setTripId(int tripId) {
+        this.tripId = tripId;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int staffId) {
+        this.userId = staffId;
+    }
+
+    public int getSeat() {
+        return seat;
+    }
+
+    public void setSeat(int seat) {
+        this.seat = seat;
+    }
 }
