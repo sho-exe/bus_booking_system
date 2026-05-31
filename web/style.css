@@ -620,3 +620,34 @@ body {
     border-radius: 12px;
     margin-left: 6px;
 }
+
+ .age-warning {
+            margin-top: 8px;
+            padding: 8px 12px;
+            background-color: #fff8e1;
+            border-left: 4px solid #f9a825;
+            color: #7b5e00;
+            border-radius: 4px;
+            font-size: 0.875rem;
+        }
+        .age-discount {
+            margin-top: 8px;
+            padding: 8px 12px;
+            background-color: #e8f5e9;
+            border-left: 4px solid #2e7d32;
+            color: #1b5e20;
+            border-radius: 4px;
+            font-size: 0.875rem;
+        }
+        .seat-price-detail {
+            font-size: 0.85rem;
+            color: #888;
+        }
+        .discounted-price {
+            color: #2e7d32;
+            font-weight: bold;
+        }
+        .strikethrough {
+            text-decoration: line-through;
+            color: #aaa;
+        }

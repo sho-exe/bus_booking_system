@@ -6,40 +6,8 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Passenger Details - Sani Express</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css" />
-    <style>
-        .age-warning {
-            margin-top: 8px;
-            padding: 8px 12px;
-            background-color: #fff8e1;
-            border-left: 4px solid #f9a825;
-            color: #7b5e00;
-            border-radius: 4px;
-            font-size: 0.875rem;
-        }
-        .age-discount {
-            margin-top: 8px;
-            padding: 8px 12px;
-            background-color: #e8f5e9;
-            border-left: 4px solid #2e7d32;
-            color: #1b5e20;
-            border-radius: 4px;
-            font-size: 0.875rem;
-        }
-        .seat-price-detail {
-            font-size: 0.85rem;
-            color: #888;
-        }
-        .discounted-price {
-            color: #2e7d32;
-            font-weight: bold;
-        }
-        .strikethrough {
-            text-decoration: line-through;
-            color: #aaa;
-        }
-    </style>
-</head>
+    <link rel="stylesheet" href="style.css" />   
+</heads
 
 <body>
     <jsp:include page="header.jsp" />
@@ -73,7 +41,7 @@
             <input type="hidden" name="origin" value="<%= (origin != null) ? origin : "" %>">
             <input type="hidden" name="destination" value="<%= (destination != null) ? destination : "" %>">
             <input type="hidden" name="trip_date" value="<%= (tripDate != null) ? tripDate : "" %>">
-            <input type="hidden" name="total_price" id="hidden_total_price" value="<%= (totalPrice != 0.0) ? totalPrice : "" %>">
+            <input type="hidden" name="total_price" id="hidden_total_price" value="<%= totalPrice %>">
             <input type="hidden" name="trip_id" value="<%= session.getAttribute("trip_id") %>">
 
             <div class="layout-grid">
@@ -81,7 +49,6 @@
                 <div class="left-col">
                     <h2 class="section-title">Fill Passenger Details</h2>
 
-                    <%-- Booker details card --%>
                     <div class="trip-card">
                         <div class="trip-info" style="width: 100%;">
                             <h3 style="margin-bottom: 15px; color: #cc2525;">
@@ -122,10 +89,10 @@
                     <div class="trip-card">
                         <div class="trip-info" style="width: 100%;">
                             <h3 style="margin-bottom: 15px; color: #cc2525;">
-                                <i class="fa-regular fa-user"></i> Details for Seat <%= seat %>
+                                <i class="fa-regular fa-user"></i> Details for Seat <%= seat.trim() %>
                             </h3>
 
-                            <input type="hidden" name="seat_number" value="<%= seat %>">
+                            <input type="hidden" name="seat_number" value="<%= seat.trim() %>">
 
                             <div class="form-row" style="margin-bottom: 0;">
                                 <div class="form-group">
@@ -143,11 +110,11 @@
                                         <i class="fa-solid fa-user"></i>
                                         <input type="number" name="passenger_age" class="form-control"
                                             placeholder="Enter age" min="1" max="120"
-                                            data-seat="<%= seat %>"
+                                            data-seat='<%= seat.trim() %>'
                                             oninput="handleAgeInput(this)"
                                             required>
                                     </div>
-                                    <div id="age-msg-<%= seat %>"></div>
+                                    <div id='age-msg-<%= seat.trim() %>'></div>
                                 </div>
                             </div>
 
@@ -158,7 +125,6 @@
                         }
                     %>
                 </div>
-
 
                 <div class="right-col">
                     <h2 class="section-title">Booking Summary</h2>
@@ -193,14 +159,19 @@
 
                     <div class="divider"></div>
 
-                    <%-- Per-seat breakdown injected by JS --%>
-                    <div id="seat-breakdown"></div>
+                    <% if (selectedSeats != null) {
+                        for (String seat : selectedSeats) { %>
+                    <div class="summary-row seat-price-detail">
+                        <span>Seat <%= seat.trim() %>:</span>
+                        <span id='price-<%= seat.trim() %>'>RM<%= String.format("%.2f", pricePerSeat) %></span>
+                    </div>
+                    <% } } %>
 
                     <div class="divider"></div>
 
                     <div class="total-row">
                         <span>Total:</span>
-                        <span class="total-price" id="display-total">RM <%= String.format("%.2f", totalPrice) %></span>
+                        <span class="total-price" id="display-total">RM<%= String.format("%.2f", totalPrice) %></span>
                     </div>
 
                     <button type="submit" class="btn-payment">Proceed to Complete Booking</button>
@@ -211,13 +182,14 @@
     </div>
 
     <script>
-        const pricePerSeat = <%= pricePerSeat %>;
-        const seatAges = {}; // { seatNumber: age }
+const pricePerSeat = parseFloat("<%= pricePerSeat %>");
+const seatAges = {};
 
         function handleAgeInput(input) {
-            const seat = input.getAttribute('data-seat');
+            const seat = input.getAttribute('data-seat').trim();
             const age = parseInt(input.value);
             const msgDiv = document.getElementById('age-msg-' + seat);
+            const priceSpan = document.getElementById('price-' + seat);
 
             msgDiv.innerHTML = '';
 
@@ -229,63 +201,41 @@
                             Passenger is a child (below 12). Please bring the child's <strong>IC card</strong> for safety verification during boarding.
                         </div>`;
                     seatAges[seat] = { age: age, discount: false };
+                    priceSpan.innerHTML = 'RM<%= String.format("%.2f", pricePerSeat) %>';
                 } else if (age >= 60) {
                     msgDiv.innerHTML = `
                         <div class="age-discount">
                             <i class="fa-solid fa-tag"></i>
-                            Warga Emas detected (age ${age}). <strong>50% senior citizen discount</strong> applied for this seat.
+                            <strong>50% senior citizen discount</strong> applied for this seat.
                         </div>`;
                     seatAges[seat] = { age: age, discount: true };
+                    const discounted = pricePerSeat * 0.5;
+                    priceSpan.innerHTML = `
+                        <span class="strikethrough">RM <%=pricePerSeat%></span>
+                        &nbsp;<span class="discounted-price">RM <%=pricePerSeat /2%></span>
+                        <span style="color:#2e7d32; font-size:0.8rem;"> (Warga Emas -50%)</span>`;
                 } else {
                     seatAges[seat] = { age: age, discount: false };
+                    priceSpan.innerHTML = 'RM<%= String.format("%.2f", pricePerSeat) %>';
                 }
             } else {
                 delete seatAges[seat];
+                priceSpan.innerHTML = 'RM<%= String.format("%.2f", pricePerSeat) %>';
             }
 
             recalcTotal();
         }
 
         function recalcTotal() {
-            const allAgeInputs = document.querySelectorAll('input[name="passenger_age"]');
-            const totalSeats = allAgeInputs.length;
-
             let total = 0;
-            let breakdownHtml = '';
-
-            allAgeInputs.forEach(input => {
-                const seat = input.getAttribute('data-seat');
+            document.querySelectorAll('input[name="passenger_age"]').forEach(input => {
+                const seat = input.getAttribute('data-seat').trim();
                 const data = seatAges[seat];
-
-                if (data && data.discount) {
-                    const discounted = pricePerSeat * 0.5;
-                    total += discounted;
-                    breakdownHtml += `
-                        <div class="summary-row seat-price-detail">
-                            <span>Seat ${seat}:</span>
-                            <span>
-                                <span class="strikethrough">RM${pricePerSeat.toFixed(2)}</span>
-                                &nbsp;<span class="discounted-price">RM${discounted.toFixed(2)}</span>
-                                <span style="color:#2e7d32; font-size:0.8rem;"> (Warga Emas -50%)</span>
-                            </span>
-                        </div>`;
-                } else {
-                    total += pricePerSeat;
-                    breakdownHtml += `
-                        <div class="summary-row seat-price-detail">
-                            <span>Seat ${seat}:</span>
-                            <span>RM${pricePerSeat.toFixed(2)}</span>
-                        </div>`;
-                }
+                total += (data && data.discount) ? pricePerSeat * 0.5 : pricePerSeat;
             });
-
-            document.getElementById('seat-breakdown').innerHTML = breakdownHtml;
             document.getElementById('display-total').textContent = 'RM ' + total.toFixed(2);
             document.getElementById('hidden_total_price').value = total.toFixed(2);
         }
-
-        // Init breakdown on page load with default prices
-        recalcTotal();
     </script>
 
 </body>
