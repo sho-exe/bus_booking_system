@@ -1,13 +1,15 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="java.sql.*" %>
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Temp</title>
-    </head>
-    <body>
-        <pre>
+    <%@ page import="java.sql.*" %>
+        <!DOCTYPE html>
+        <html lang="en">
+
+        <head>
+            <meta charset="UTF-8">
+            <title>Temp</title>
+        </head>
+
+        <body>
+            <pre>
 === SESSION DATA ===
 TRIP ID: <%= session.getAttribute("trip_id")%>
 TOTAL PRICE: <%= session.getAttribute("total_price")%>
@@ -32,7 +34,7 @@ booker_name:  <%= request.getParameter("booker_name")%>
 booker_phone: <%= request.getParameter("booker_phone")%>
 
             <%
-    session.setAttribute("booker_phone", request.getParameter("booker_phone"));%>
+                session.setAttribute("booker_phone", request.getParameter("booker_phone"));%>
 
 
 
@@ -40,7 +42,7 @@ booker_phone: <%= request.getParameter("booker_phone")%>
             <%
                 String[] seats = request.getParameterValues("seat_number");
                 String[] names = request.getParameterValues("passenger_name");
-                String[] ages = request.getParameterValues("passenger_phone");
+                String[] ages = request.getParameterValues("passenger_age");
                 int tripId = Integer.parseInt((String) session.getAttribute("trip_id"));
 
                 String jdbcURL = "jdbc:mysql://localhost:3306/bus";
@@ -53,6 +55,81 @@ booker_phone: <%= request.getParameter("booker_phone")%>
                     try {
                         Class.forName("com.mysql.cj.jdbc.Driver");
                         Connection conn = DriverManager.getConnection(jdbcURL, jdbcUsername, jdbcPassword);
+
+                        // If user is not logged in, add user info first
+                        String passengerIdStr = (String) session.getAttribute("passengerId");
+                        if (passengerIdStr == null || passengerIdStr.trim().isEmpty()) {
+                            String bookerName = request.getParameter("booker_name");
+                            String bookerPhone = request.getParameter("booker_phone");
+                            if (bookerName != null && bookerPhone != null) {
+                                bookerName = bookerName.trim();
+                                bookerPhone = bookerPhone.trim();
+
+                                // 1. Check if user already exists with this phone number
+                                PreparedStatement checkPhoneStmt = conn.prepareStatement("SELECT id, username, email FROM users WHERE phone_number = ?");
+                                checkPhoneStmt.setString(1, bookerPhone);
+                                ResultSet rsPhone = checkPhoneStmt.executeQuery();
+                                if (rsPhone.next()) {
+                                    passengerIdStr = String.valueOf(rsPhone.getInt("id"));
+                                    session.setAttribute("passengerId", passengerIdStr);
+                                    session.setAttribute("username", rsPhone.getString("username"));
+                                    session.setAttribute("email", rsPhone.getString("email"));
+                                    session.setAttribute("phoneNumber", bookerPhone);
+                                    session.setAttribute("userRole", "customer");
+                                }
+                                rsPhone.close();
+                                checkPhoneStmt.close();
+                            }
+
+                            if (passengerIdStr == null || passengerIdStr.trim().isEmpty()) {
+                                // 2. Generate unique username and email
+                                String email = bookerName.replaceAll("\\s+", "").toLowerCase() + "_" + bookerPhone + "@guest.com";
+                                String username = bookerName;
+
+                                PreparedStatement checkUserStmt = conn.prepareStatement("SELECT COUNT(*) FROM users WHERE username = ?");
+                                checkUserStmt.setString(1, username);
+                                ResultSet rsUser = checkUserStmt.executeQuery();
+                                if (rsUser.next() && rsUser.getInt(1) > 0) {
+                                    username = bookerName + "_" + bookerPhone;
+                                }
+                                rsUser.close();
+                                checkUserStmt.close();
+
+                                PreparedStatement checkEmailStmt = conn.prepareStatement("SELECT COUNT(*) FROM users WHERE email = ?");
+                                checkEmailStmt.setString(1, email);
+                                ResultSet rsEmail = checkEmailStmt.executeQuery();
+                                if (rsEmail.next() && rsEmail.getInt(1) > 0) {
+                                    email = bookerName.replaceAll("\\s+", "").toLowerCase() + "_" + System.currentTimeMillis() + "@guest.com";
+                                }
+                                rsEmail.close();
+                                checkEmailStmt.close();
+
+                                // 3. Insert new user record
+                                PreparedStatement insertUserStmt = conn.prepareStatement(
+                                    "INSERT INTO users (username, email, password, role, phone_number) VALUES (?, ?, ?, ?, ?)",
+                                    Statement.RETURN_GENERATED_KEYS
+                                );
+                                insertUserStmt.setString(1, username);
+                                insertUserStmt.setString(2, email);
+                                insertUserStmt.setString(3, "123456");
+                                insertUserStmt.setString(4, "customer");
+                                insertUserStmt.setString(5, bookerPhone);
+
+                                insertUserStmt.executeUpdate();
+                                ResultSet rsKeys = insertUserStmt.getGeneratedKeys();
+                                if (rsKeys.next()) {
+                                    passengerIdStr = String.valueOf(rsKeys.getInt(1));
+                                    session.setAttribute("passengerId", passengerIdStr);
+                                    session.setAttribute("username", username);
+                                    session.setAttribute("email", email);
+                                    session.setAttribute("phoneNumber", bookerPhone);
+                                    session.setAttribute("userRole", "customer");
+                                }
+                                rsKeys.close();
+                                insertUserStmt.close();
+                            }
+                        }
+
                         conn.setAutoCommit(false);
 
                         String insertPassengerSql = "INSERT INTO Passenger (name, age) VALUES (?, ?)";
@@ -90,7 +167,7 @@ booker_phone: <%= request.getParameter("booker_phone")%>
                                     if (bookingRs.next()) {
                                         int bookingId = bookingRs.getInt(1);
                                         session.setAttribute("booking_id", String.valueOf(bookingId));
-                                        
+
                                         out.println("Booking INSERT OK — trip_id: " + tripId + ", seat: " + seat + ", booking_id: " + session.getAttribute("booking_id"));
                                     } else {
                                         out.println("Booking INSERT OK but no booking_id returned");
@@ -125,9 +202,10 @@ booker_phone: <%= request.getParameter("booker_phone")%>
             %>
         </pre>
 
-        <%-- Redirect only after all output is done --%>
-        <% if (insertSuccess) { %>
-        <script>window.location.href = "createPayment.jsp";</script>
-        <% }%>
-    </body>
-</html>
+            <%-- Redirect only after all output is done --%>
+                <% if (insertSuccess) { %>
+                    <script>window.location.href = "createPayment.jsp";</script>
+                    <% }%>
+        </body>
+
+        </html>
