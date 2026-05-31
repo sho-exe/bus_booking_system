@@ -10,11 +10,11 @@ public class Trip {
     private double price;
     private int busId;
     private int driverId;
-    
+
     public Trip() {
-        
+
     }
-    
+
     public Trip(int tripId, String origin, String destination,
             String departureTime, String arrivalTime,
             double price, int busId, int driverId) {
@@ -59,7 +59,7 @@ public class Trip {
     public int getDriverId() {
         return driverId;
     }
-    
+
     public void setTripId(int tripId) {
         this.tripId = tripId;
     }

@@ -54,7 +54,7 @@ public class AdminDAO {
     public List<TripDetail> getAllTripsWithDrivers() {
         List<TripDetail> trips = new ArrayList<>();
         String sql = "SELECT t.trip_id, t.origin, t.destination, t.departure_time, "
-                + "b.bus_number, d.driver_id, d.name AS driver_name "
+                + "b.bus_number, d.driver_id, d.name AS driver_name, d.license_number AS driver_license "
                 + "FROM trip t "
                 + "JOIN bus b ON t.bus_id = b.bus_id "
                 + "LEFT JOIN driver d ON t.driver_id = d.driver_id "
@@ -71,6 +71,7 @@ public class AdminDAO {
                 trip.setPlateNumber(rs.getString("bus_number"));
                 trip.setDriverId(rs.getInt("driver_id")); // Will be 0 if NULL
                 trip.setDriverName(rs.getString("driver_name")); // Will be null if no driver
+                trip.setLicenseNumber(rs.getString("driver_license")); // Will be null if no driver
                 trips.add(trip);
             }
         } catch (SQLException e) {

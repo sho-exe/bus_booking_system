@@ -23,6 +23,7 @@ public class TripDetail {
     private String busType;
     private int totalSeats;
     private int bookedSeats;
+    private String licenseNumber;
     private int driverId;
     private String driverName;
     private int tripId;
@@ -134,5 +135,13 @@ public class TripDetail {
 
     public void setTripId(int tripId) {
         this.tripId = tripId;
+    }
+
+    public String getLicenseNumber() {
+        return licenseNumber;
+    }
+
+    public void setLicenseNumber(String licenseNumber) {
+        this.licenseNumber = licenseNumber;
     }
 }
