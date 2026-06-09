@@ -21,8 +21,8 @@
             String userId = (String) session.getAttribute("passengerId");
             BookingDAO bookingDAO = new BookingDAO();
             List<Booking> myBookings = (userId != null)
-                ? bookingDAO.getBookingsByUser(userId)
-                : new java.util.ArrayList<>();
+                    ? bookingDAO.getBookingsByUser(userId)
+                    : new java.util.ArrayList<>();
         %>
 
         <div class="main-container">
@@ -45,40 +45,52 @@
                 <% } else {
                     for (Booking b : myBookings) {
                         String statusClass = "status-pending";
-                        String statusIcon  = "fa-clock";
+                        String statusIcon = "fa-clock";
                         if ("Confirmed".equalsIgnoreCase(b.getStatus())) {
                             statusClass = "status-confirmed";
-                            statusIcon  = "fa-circle-check";
+                            statusIcon = "fa-circle-check";
                         } else if ("Cancelled".equalsIgnoreCase(b.getStatus())) {
                             statusClass = "status-cancelled";
-                            statusIcon  = "fa-circle-xmark";
+                            statusIcon = "fa-circle-xmark";
                         }
                 %>
 
                 <div class="trip-card">
                     <div class="trip-info">
-                        <h3>Booking #<%= b.getBookingId() %></h3>
+                        <h3>Booking #<%= b.getBookingId()%></h3>
                         <p class="route">
-                            <i class="fa-solid fa-chair"></i> Seat <%= b.getSeat() %>
+                            <i class="fa-solid fa-chair"></i> Seat <%= b.getSeat()%>
                             &nbsp;&bull;&nbsp;
-                            <i class="fa-solid fa-route"></i> Trip #<%= b.getTripId() %>
+                            <i class="fa-solid fa-route"></i> Trip #<%= b.getTripId()%>
                         </p>
                         <p class="bus-type">
-                            <% if (b.getBookingDate() != null) { %>
-                                <i class="fa-regular fa-calendar"></i>
-                                <%= b.getBookingDate().toString().substring(0, 10) %>
-                            <% } %>
+                            <% if (b.getBookingDate() != null) {%>
+                            <i class="fa-regular fa-calendar"></i>
+                            <%= b.getBookingDate().toString().substring(0, 10)%>
+                            <% }%>
                         </p>
                     </div>
                     <div class="trip-action">
-                        <span class="status-badge <%= statusClass %>">
-                            <i class="fa-solid <%= statusIcon %>"></i>
-                            <%= b.getStatus() != null ? b.getStatus() : "Pending" %>
+                        <span class="status-badge <%= statusClass%>">
+                            <i class="fa-solid <%= statusIcon%>"></i>
+                            <%= b.getStatus() != null ? b.getStatus() : "Pending"%>
                         </span>
+                        <br>
+                        <a href="ReceiptPDFServlet?booking_id=<%= b.getBookingId()%>" 
+                           class="receipt-btn" 
+                           target="_blank">
+                            <span class="receipt-icon">
+                                <i class="fa-solid fa-file-pdf"></i>
+                            </span>
+                            <span class="receipt-text">
+                                Download Receipt
+                            </span>
+                        </a>
                     </div>
                 </div>
 
-                <% } } %>
+                <% }
+                    }%>
 
             </div><!-- /.results-container -->
         </div><!-- /.main-container -->

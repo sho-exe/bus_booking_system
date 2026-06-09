@@ -7,7 +7,7 @@
     <title>Passenger Details - Sani Express</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css" />   
-</heads
+</head>
 
 <body>
     <jsp:include page="header.jsp" />
@@ -37,7 +37,7 @@
         <br>
         <a href="SelectSeat.jsp" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Back to Seats</a>
 
-        <form action="temp.jsp" method="POST">
+        <form action="createPayment.jsp" method="POST">
 
             <input type="hidden" name="origin" value="<%= (origin != null) ? origin : "" %>">
             <input type="hidden" name="destination" value="<%= (destination != null) ? destination : "" %>">
@@ -208,7 +208,7 @@
                         <span class="total-price" id="display-total">RM<%= String.format("%.2f", accumulatedPrice != null ? (accumulatedPrice + totalPrice) * 0.9 : totalPrice) %></span>
                     </div>
 
-                    <button type="submit" class="btn-payment">Proceed to Complete Booking</button>
+                    <button type="submit" class="btn-payment">Proceed to Payment</button>
                 </div>
             </div>
         </form>

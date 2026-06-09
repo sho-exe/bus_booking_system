@@ -1,8 +1,103 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="java.sql.*"%>
+<%@page import="java.util.*"%>
 <%@page import="dao.PaymentDAO"%>
 <%@page import="model.Payment"%>
-<%@ page import="java.sql.SQLException" %>
+<%!
+    private int ensureCustomerUser(Connection conn, javax.servlet.http.HttpSession session) throws Exception {
+        String passengerIdStr = (String) session.getAttribute("passengerId");
+        if (passengerIdStr != null && !passengerIdStr.trim().isEmpty()) {
+            return Integer.parseInt(passengerIdStr);
+        }
 
+        String bookerName = (String) session.getAttribute("booker_name");
+        String bookerPhone = (String) session.getAttribute("booker_phone");
+        if (bookerName == null || bookerName.trim().isEmpty()) bookerName = "Guest Customer";
+        if (bookerPhone == null || bookerPhone.trim().isEmpty()) bookerPhone = "0100000000";
+
+        PreparedStatement checkPhoneStmt = conn.prepareStatement("SELECT id, username, email FROM users WHERE phone_number = ?");
+        checkPhoneStmt.setString(1, bookerPhone);
+        ResultSet rsPhone = checkPhoneStmt.executeQuery();
+        if (rsPhone.next()) {
+            int id = rsPhone.getInt("id");
+            session.setAttribute("passengerId", String.valueOf(id));
+            session.setAttribute("username", rsPhone.getString("username"));
+            session.setAttribute("email", rsPhone.getString("email"));
+            session.setAttribute("phoneNumber", bookerPhone);
+            session.setAttribute("userRole", "customer");
+            rsPhone.close();
+            checkPhoneStmt.close();
+            return id;
+        }
+        rsPhone.close();
+        checkPhoneStmt.close();
+
+        String cleanName = bookerName.replaceAll("\\s+", "").toLowerCase();
+        String email = cleanName + "_" + bookerPhone + "@guest.com";
+        String username = bookerName;
+
+        PreparedStatement insertUserStmt = conn.prepareStatement(
+            "INSERT INTO users (username, email, password, role, phone_number) VALUES (?, ?, ?, ?, ?)",
+            Statement.RETURN_GENERATED_KEYS
+        );
+        insertUserStmt.setString(1, username);
+        insertUserStmt.setString(2, email);
+        insertUserStmt.setString(3, "123456");
+        insertUserStmt.setString(4, "customer");
+        insertUserStmt.setString(5, bookerPhone);
+        insertUserStmt.executeUpdate();
+
+        ResultSet rsKeys = insertUserStmt.getGeneratedKeys();
+        int userId = 0;
+        if (rsKeys.next()) userId = rsKeys.getInt(1);
+        rsKeys.close();
+        insertUserStmt.close();
+
+        session.setAttribute("passengerId", String.valueOf(userId));
+        session.setAttribute("username", username);
+        session.setAttribute("email", email);
+        session.setAttribute("phoneNumber", bookerPhone);
+        session.setAttribute("userRole", "customer");
+        return userId;
+    }
+
+    private void insertLeg(Connection conn, String tripIdStr, String[] seats, String[] names, String[] ages,
+                           int userId, java.util.List<Integer> bookingIds) throws Exception {
+        if (tripIdStr == null || seats == null || seats.length == 0) return;
+
+        int tripId = Integer.parseInt(tripIdStr);
+        PreparedStatement passengerStmt = conn.prepareStatement(
+            "INSERT INTO Passenger (name, age) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS);
+        PreparedStatement bookingStmt = conn.prepareStatement(
+            "INSERT INTO Booking (passenger_id, trip_id, seat, user_id) VALUES (?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+
+        for (int i = 0; i < seats.length; i++) {
+            String name = (names != null && names.length > i) ? names[i] : "Passenger";
+            String age = (ages != null && ages.length > i) ? ages[i] : "0";
+
+            passengerStmt.setString(1, name);
+            passengerStmt.setString(2, age);
+            passengerStmt.executeUpdate();
+
+            ResultSet prs = passengerStmt.getGeneratedKeys();
+            if (prs.next()) {
+                int passengerId = prs.getInt(1);
+                bookingStmt.setInt(1, passengerId);
+                bookingStmt.setInt(2, tripId);
+                bookingStmt.setInt(3, Integer.parseInt(seats[i].trim()));
+                bookingStmt.setInt(4, userId);
+                bookingStmt.executeUpdate();
+
+                ResultSet brs = bookingStmt.getGeneratedKeys();
+                if (brs.next()) bookingIds.add(brs.getInt(1));
+                brs.close();
+            }
+            prs.close();
+        }
+        passengerStmt.close();
+        bookingStmt.close();
+    }
+%>
 <%
     String statusId = request.getParameter("status_id");
     String referenceNo = request.getParameter("order_id");
@@ -12,98 +107,145 @@
     String expectedBillCode = (String) session.getAttribute("pending_billcode");
     String expectedRef = (String) session.getAttribute("pending_ref");
 
-    if (referenceNo == null || !referenceNo.equals(expectedRef) || !billCode.equals(expectedBillCode)) {
+    if (referenceNo == null || expectedRef == null || billCode == null || expectedBillCode == null
+            || !referenceNo.equals(expectedRef) || !billCode.equals(expectedBillCode)) {
         out.println("<h2>Invalid or expired payment response.</h2>");
         return;
     }
 
-    // Validate ToyyibPay status
     boolean paymentSuccess = "1".equals(statusId);
+    boolean bookingSaved = false;
+    String saveError = null;
+    java.util.List<Integer> savedBookingIds = new java.util.ArrayList<Integer>();
 
-   if (paymentSuccess) {
-    Payment payment = new Payment();
-    payment.setBookingId(referenceNo);
-    payment.setAmount((Double) session.getAttribute("total_price"));
-    payment.setBank("ToyyibPay");
-    payment.setTransactionId(transactionId);
-    payment.setBillCode(billCode);
-    payment.setBuyerEmail((String) session.getAttribute("email"));
-    payment.setBuyerName((String) session.getAttribute("username"));
-    payment.setStatus("SUCCESS");
+    if (paymentSuccess) {
+        Connection conn = null;
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/bus", "root", "");
+            conn.setAutoCommit(false);
 
-    try {
-        boolean saved = new PaymentDAO().insertPayment(payment);
-        if (saved) {
-            out.println("Payment recorded successfully.");
-        } else {
-//            out.println("Payment insert returned false — check DAO.");
+            int userId = ensureCustomerUser(conn, session);
+
+            insertLeg(conn,
+                    (String) session.getAttribute("pending_out_trip_id"),
+                    (String[]) session.getAttribute("pending_out_seats"),
+                    (String[]) session.getAttribute("pending_out_names"),
+                    (String[]) session.getAttribute("pending_out_ages"),
+                    userId,
+                    savedBookingIds);
+
+            insertLeg(conn,
+                    (String) session.getAttribute("pending_return_trip_id"),
+                    (String[]) session.getAttribute("pending_return_seats"),
+                    (String[]) session.getAttribute("pending_return_names"),
+                    (String[]) session.getAttribute("pending_return_ages"),
+                    userId,
+                    savedBookingIds);
+
+            if (!savedBookingIds.isEmpty()) {
+                double totalPaid = Double.parseDouble(String.valueOf(session.getAttribute("total_price")));
+                double amountPerBooking = totalPaid / savedBookingIds.size();
+
+                PreparedStatement updateBookingStmt = conn.prepareStatement(
+                    "UPDATE Booking SET status = ? WHERE booking_id = ?"
+                );
+
+                PreparedStatement paymentStmt = conn.prepareStatement(
+                    "INSERT INTO payment "
+                    + "(booking_id, amount, bank, transaction_id, bill_code, buyer_email, buyer_name, status) "
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+                );
+
+                for (Integer bookingId : savedBookingIds) {
+                    updateBookingStmt.setString(1, "Confirmed");
+                    updateBookingStmt.setInt(2, bookingId);
+                    updateBookingStmt.executeUpdate();
+
+                    paymentStmt.setInt(1, bookingId);
+                    paymentStmt.setDouble(2, amountPerBooking);
+                    paymentStmt.setString(3, "ToyyibPay");
+                    paymentStmt.setString(4, transactionId != null ? transactionId : referenceNo);
+                    paymentStmt.setString(5, billCode);
+                    paymentStmt.setString(6, (String) session.getAttribute("email"));
+                    paymentStmt.setString(7, (String) session.getAttribute("username"));
+                    paymentStmt.setString(8, "SUCCESS");
+                    paymentStmt.executeUpdate();
+                }
+
+                paymentStmt.close();
+                updateBookingStmt.close();
+            }
+
+            conn.commit();
+            bookingSaved = true;
+            session.setAttribute("last_receipt_booking_ids", savedBookingIds);
+
+        } catch (Exception e) {
+            bookingSaved = false;
+            saveError = e.getMessage();
+            if (conn != null) {
+                try { conn.rollback(); } catch (Exception ignore) {}
+            }
+        } finally {
+            if (conn != null) {
+                try { conn.close(); } catch (Exception ignore) {}
+            }
         }
-    } catch (SQLException e) {
-        out.println("Payment INSERT FAILED: " + e.getMessage());
-        e.printStackTrace();
     }
-}
-    // Clear pending tokens
+
     session.removeAttribute("pending_billcode");
     session.removeAttribute("pending_ref");
+    session.removeAttribute("pending_out_trip_id");
+    session.removeAttribute("pending_out_seats");
+    session.removeAttribute("pending_out_names");
+    session.removeAttribute("pending_out_ages");
+    session.removeAttribute("pending_out_total");
+    session.removeAttribute("pending_return_trip_id");
+    session.removeAttribute("pending_return_seats");
+    session.removeAttribute("pending_return_names");
+    session.removeAttribute("pending_return_ages");
+    session.removeAttribute("pending_return_total");
 %>
 <!DOCTYPE html>
 <html>
     <head>
         <meta charset="UTF-8">
         <title>Payment Result - Sani Express</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
         <jsp:include page="header.jsp" />
 
-        <div class="main-container" style="max-width: 600px; margin: 40px auto; text-align: center; padding: 40px; background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+        <div class="main-container" style="max-width: 650px; margin: 40px auto; text-align: center; padding: 40px; background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
 
-            <% if (paymentSuccess) {%>
+            <% if (paymentSuccess && bookingSaved) { %>
             <div style="font-size: 60px; color: #16a34a; margin-bottom: 20px;">
                 <i class="fa-solid fa-circle-check"></i>
             </div>
             <h1 style="color: #16a34a; margin-bottom: 15px;">Payment Successful!</h1>
-            <p style="color: #6b7280; margin-bottom: 30px;">Your transaction was completed successfully. Your reference number is <strong><%= referenceNo%></strong>.</p>
+            <p style="color: #6b7280; margin-bottom: 20px;">Your payment and booking were completed successfully.</p>
+            <p style="color: #6b7280; margin-bottom: 30px;">Reference number: <strong><%= referenceNo %></strong></p>
 
-            <!-- Automatically submit the booking details to the servlet -->
-            <!--<form id="insertBookingForm" action="booking?action=insert" method="POST">-->
-                <%
-                    String[] names = (String[]) session.getAttribute("checkout_names");
-                    String[] phones = (String[]) session.getAttribute("checkout_phones");
-                    String[] seats = (String[]) session.getAttribute("checkout_seats");
-                    String tripIdStr = (String) session.getAttribute("trip_id");
+            <a href="customer.jsp" class="btn-payment">View Tickets</a>
 
-                    if (names != null && seats != null) {
-                        for (int i = 0; i < seats.length; i++) {
-                %>
-                <input type="hidden" name="seat_number" value="<%= seats[i]%>">
-                <input type="hidden" name="passenger_name" value="<%= names[i]%>">
-                <input type="hidden" name="passenger_phone" value="<%= phones[i]%>">
-                <%      }
-                    }
-                %>
-                <input type="hidden" name="trip_id" value="<%= tripIdStr%>">
-
-                 <a href="customer.jsp" class="btn-payment">View Tickets</a>
-
-                <!--<button type="submit" class="btn-payment">View Tickets</button>-->
-            </form>
-
-            <script>
-                // Auto submit to finalize booking
-                document.getElementById('insertBookingForm').submit();
-            </script>
+            <% } else if (paymentSuccess) { %>
+            <div style="font-size: 60px; color: #dc2626; margin-bottom: 20px;">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h1 style="color: #dc2626; margin-bottom: 15px;">Payment Successful, Booking Save Failed</h1>
+            <p style="color: #6b7280; margin-bottom: 30px;">Error: <%= saveError != null ? saveError : "Unknown database error" %></p>
+            <a href="Booking.jsp" class="btn-payment">Back to Booking</a>
 
             <% } else { %>
             <div style="font-size: 60px; color: #dc2626; margin-bottom: 20px;">
                 <i class="fa-solid fa-circle-xmark"></i>
             </div>
             <h1 style="color: #dc2626; margin-bottom: 15px;">Payment Failed</h1>
-            <p style="color: #6b7280; margin-bottom: 30px;">Your transaction could not be completed. No charges were made.</p>
-
+            <p style="color: #6b7280; margin-bottom: 30px;">Your transaction could not be completed. No booking was saved.</p>
             <a href="SelectSeat.jsp" class="btn-payment">Try Again</a>
-            <% }%>
+            <% } %>
 
         </div>
     </body>

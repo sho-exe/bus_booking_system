@@ -28,6 +28,11 @@
         <servlet-class>controller.RegisterServlet</servlet-class>
     </servlet>
     
+
+    <servlet>
+        <servlet-name>ReceiptPDFServlet</servlet-name>
+        <servlet-class>controller.ReceiptPDFServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>BookingServlet</servlet-name>
         <url-pattern>/booking</url-pattern>
@@ -53,6 +58,11 @@
         <url-pattern>/RegisterServlet</url-pattern>
     </servlet-mapping>
     
+
+    <servlet-mapping>
+        <servlet-name>ReceiptPDFServlet</servlet-name>
+        <url-pattern>/ReceiptPDFServlet</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>
             30
