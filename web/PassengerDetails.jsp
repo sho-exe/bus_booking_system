@@ -208,7 +208,9 @@
                         <span class="total-price" id="display-total">RM<%= String.format("%.2f", accumulatedPrice != null ? (accumulatedPrice + totalPrice) * 0.9 : totalPrice) %></span>
                     </div>
 
-                    <button type="submit" class="btn-payment">Proceed to Payment</button>
+                    <button type="submit" class="btn-payment">
+                        <%= (sessionRetTripId != null && !sessionRetTripId.isEmpty()) ? "Next: Choose Return Seats" : "Proceed to Payment" %>
+                    </button>
                 </div>
             </div>
         </form>
