@@ -5,8 +5,19 @@
     request.setCharacterEncoding("UTF-8");
 
     String[] seats = request.getParameterValues("seat_number");
+    if (seats == null) {
+        seats = request.getParameterValues("selected_seats");
+    }
+
     String[] names = request.getParameterValues("passenger_name");
+    if (names == null || names.length == 0) {
+        names = (String[]) session.getAttribute("pending_out_names");
+    }
+
     String[] ages  = request.getParameterValues("passenger_age");
+    if (ages == null || ages.length == 0) {
+        ages = (String[]) session.getAttribute("pending_out_ages");
+    }
 
     String bookerName  = request.getParameter("booker_name");
     String bookerPhone = request.getParameter("booker_phone");
@@ -19,6 +30,28 @@
         currentTotal = (reqTotalStr != null && !reqTotalStr.trim().isEmpty()) ? Double.parseDouble(reqTotalStr) : 0.0;
     } catch (NumberFormatException e) {
         currentTotal = 0.0;
+    }
+
+    if (currentTotal == 0.0 && seats != null) {
+        double pricePerSeat = 0.0;
+        Object priceAttr = session.getAttribute("price");
+        if (priceAttr != null) {
+            pricePerSeat = Double.parseDouble(String.valueOf(priceAttr));
+        }
+        for (int i = 0; i < seats.length; i++) {
+            double seatPrice = pricePerSeat;
+            if (ages != null && ages.length > i && ages[i] != null && !ages[i].isEmpty()) {
+                try {
+                    int age = Integer.parseInt(ages[i]);
+                    if (age >= 60) {
+                        seatPrice = pricePerSeat * 0.5;
+                    }
+                } catch (NumberFormatException e) {
+                    // Ignore
+                }
+            }
+            currentTotal += seatPrice;
+        }
     }
 
     String currentTripId = String.valueOf(session.getAttribute("trip_id"));
