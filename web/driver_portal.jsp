@@ -96,7 +96,7 @@
                 <h4 class="mb-0 fw-bold">Sani Express - Staff Portal</h4>
                 <small>Welcome, ${driver.name}</small>
             </div>
-            <a href="LogoutServlet" class="logout-btn">Logout</a>
+            <a href="logout.jsp" class="logout-btn">Logout</a>
         </div>
 
         <div class="container mt-5">

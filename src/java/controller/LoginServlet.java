@@ -30,8 +30,10 @@ public class LoginServlet extends HttpServlet {
             
 
 
-            if ("System Admin".equalsIgnoreCase(user.getRole())) {
+            if ("Admin".equalsIgnoreCase(user.getRole())) {
                 response.sendRedirect("BusServlet?action=list");
+            } else if ("Driver".equalsIgnoreCase(user.getRole())) {
+                response.sendRedirect("DriverPortal");
             } else {
                 response.sendRedirect("Booking.jsp");
             }
