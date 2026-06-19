@@ -14,12 +14,13 @@ public class RegisterServlet extends HttpServlet {
     private UserDAO userDao;
 
     public void init() {
-        userDao = new UserDAO(); // Initialize the DAO once
+        userDao = new UserDAO();
     }
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+        
+        // 0. Get Values from Form
         String username = request.getParameter("username");
         String email = request.getParameter("email");
         String password = request.getParameter("password");
