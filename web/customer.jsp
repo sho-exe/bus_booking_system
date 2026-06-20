@@ -14,6 +14,7 @@
                 </head>
 
                 <body>
+                    <div class="bg-ticket-icon"><i class="fa-solid fa-ticket"></i></div>
                     <jsp:include page="header.jsp" />
 
                     <% String role=(String) session.getAttribute("userRole"); String username=(String)

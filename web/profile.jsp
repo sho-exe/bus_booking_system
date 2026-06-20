@@ -11,6 +11,7 @@
     </head>
 
     <body>
+        <div class="bg-user-icon"><i class="fa-solid fa-user"></i></div>
         <jsp:include page="header.jsp" />
 
         <% String role = (String) session.getAttribute("userRole");
