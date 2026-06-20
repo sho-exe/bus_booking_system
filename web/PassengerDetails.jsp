@@ -154,7 +154,7 @@
                         <span><%= session.getAttribute("trip_id") %></span>
                     </div>
                     <div class="summary-row bold">
-                        <span>Route:</span>
+                        <span><i class="fa-solid fa-bus"></i> Route:</span>
                         <span><%= (origin != null) ? origin : "" %> &rarr; <%= (destination != null) ? destination : "" %></span>
                     </div>
                     <div class="summary-row">

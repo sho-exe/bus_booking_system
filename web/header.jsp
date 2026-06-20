@@ -5,7 +5,7 @@
 
             <header class="top-header">
                 <div class="header-branding">
-                    <h1>Sani Express</h1>
+                    <h1><i class="fa-solid fa-bus"></i> <i>Sani Express</i></h1>
                     <% if (_username !=null) { %>
                         <p>Welcome, <%= _username %>
                         </p>

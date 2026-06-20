@@ -51,6 +51,29 @@
                                 </div>
                             </div>
 
+                            <div class="promo-container">
+                                <div class="promo-card senior">
+                                    <div class="promo-icon-box">
+                                        <i class="fa-solid fa-user-tag"></i>
+                                    </div>
+                                    <div class="promo-content">
+                                        <span class="promo-badge">Senior Promo</span>
+                                        <h3 class="promo-title">50% Golden Age Discount</h3>
+                                        <p class="promo-desc">Elders (ages 60+) enjoy an automatic 50% discount on every ticket purchased.</p>
+                                    </div>
+                                </div>
+                                <div class="promo-card return">
+                                    <div class="promo-icon-box">
+                                        <i class="fa-solid fa-tags"></i>
+                                    </div>
+                                    <div class="promo-content">
+                                        <span class="promo-badge">Round Trip Deal</span>
+                                        <h3 class="promo-title">10% Off Returning Trips</h3>
+                                        <p class="promo-desc">Book a return journey and enjoy a 10% discount on your entire booking total!</p>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="search-card">
                                 <h2 class="card-title" style="margin-bottom: 25px; color: #cc2525; font-size: 18px;"><i
                                         class="fa-solid fa-magnifying-glass"></i> Search Bus Trips</h2>
@@ -139,22 +162,41 @@
                                     <input type="hidden" name="return_date" id="ret_date">
                                     <input type="hidden" name="return_price" id="ret_price">
 
-                                    <div class="results-container">
-                                        <h2 class="section-title" style="margin-top: 30px;">Available Trips for
-                                            <%=trip_date%>
-                                        </h2>
-
-
-                                    </div>
+                                     <div class="results-container">
+                                         <div
+                                             style="display:flex; align-items:center; gap:10px; margin-top:36px; margin-bottom:16px;">
+                                             <div
+                                                 style="flex:1; height:1px; background:#eee;">
+                                             </div>
+                                             <span class="trip-pill-bar">
+                                                 <i
+                                                     class="fa-solid fa-arrow-right"></i>&nbsp;
+                                                 Outbound Trip
+                                             </span>
+                                             <div
+                                                 style="flex:1; height:1px; background:#eee;">
+                                             </div>
+                                         </div>
+                                         <h2 class="section-title">Outbound Trips for
+                                             <%=trip_date%>
+                                         </h2>
+                                     </div>
                                     <% }%>
 
                                         <% if (request.getAttribute("trips") !=null && request.getAttribute("busList")
                                             !=null) { List<Trip> trips = (List<Trip>) request.getAttribute("trips");
                                                 List<Bus> busList = (List<Bus>) request.getAttribute("busList");
 
-                                                        // Use a counter to stay in sync with the bus list
-                                                        for (int i = 0; i < trips.size(); i++) { Trip t=trips.get(i);
-                                                            Bus b=busList.get(i); // This gets the matching bus for this trip %>
+                                                        if (trips.isEmpty()) { %>
+                                                        <div style="text-align:center; padding:32px; background:#fdfdfd; border:1px solid #f0f0f0;
+                      border-radius:18px; color:#999; font-size:14px; margin-bottom: 20px;">
+                                                            <i class="fa-solid fa-circle-info"
+                                                                style="font-size:24px; color:#ddd; display:block; margin-bottom:10px;"></i>
+                                                            No outbound trips found for this date.
+                                                        </div>
+                                                        <% } else { 
+                                                            for (int i=0; i < trips.size(); i++) { Trip t=trips.get(i);
+                                                            Bus b=busList.get(i);  %>
                                                             <div class="trip-card">
                                                                 <div class="trip-info">
                                                                     <h3>
@@ -166,7 +208,7 @@
                                                                     </p>
 
                                                                     <p class="bus-type">
-                                                                        <%= b.getBusType()%> • <%= b.getBusNumber()%> •
+                                                                        <i class="fa-solid fa-bus"></i> <%= b.getBusType()%> • <%= b.getBusNumber()%> •
                                                                                 <%= b.getTotalSeats()%> Seats Total
                                                                     </p>
                                                                 </div>
@@ -180,7 +222,7 @@
                                                                     </button>
                                                                 </div>
                                                             </div>
-                                                            <% } } %>
+                                                            <% } } } %>
 
                                                                 <%-- ── RETURN TRIPS SECTION
                                                                     ─────────────────────────────── --%>
@@ -199,9 +241,7 @@
                                                                                             <div
                                                                                                 style="flex:1; height:1px; background:#eee;">
                                                                                             </div>
-                                                                                            <span style="background:#fef2f2; color:#cc2525; border:1px solid #fca5a5;
-                              padding:6px 16px; border-radius:20px; font-size:13px; font-weight:700;
-                              white-space:nowrap;">
+                                                                                            <span class="trip-pill-bar">
                                                                                                 <i
                                                                                                     class="fa-solid fa-rotate-left"></i>&nbsp;
                                                                                                 Return Trip
@@ -242,7 +282,7 @@
                                                                                                                 rt.getDestination()%>
                                                                                                     </p>
                                                                                                     <p class="bus-type">
-                                                                                                        <%=
+                                                                                                        <i class="fa-solid fa-bus"></i> <%=
                                                                                                             rb.getBusType()%>
                                                                                                             &bull; <%=
                                                                                                                 rb.getBusNumber()%>

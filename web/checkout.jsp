@@ -68,7 +68,7 @@
                 <div class="right-col">
                     <h2 class="section-title">Summary</h2>
                     <div class="summary-row bold">
-                        <span>Route:</span>
+                        <span><i class="fa-solid fa-bus"></i> Route:</span>
                         <span><%= origin %> &rarr; <%= destination %></span>
                     </div>
                     <div class="summary-row">
