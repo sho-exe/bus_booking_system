@@ -15,7 +15,7 @@
                     <% if (_username !=null) { %>
                         <a href="logout.jsp" class="header-action-btn">LOG OUT</a>
                         <% } else { %>
-                            <a href="login.html" class="header-action-btn">LOGIN</a>
+                            <a href="login.html" class="header-action-btn" style="font: weight 1000px;">LOGIN</a>
                             <% } %>
                 </div>
             </header>

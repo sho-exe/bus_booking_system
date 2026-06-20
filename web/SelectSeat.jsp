@@ -315,6 +315,7 @@
 
         <script>
             const requiredSeats = <%= (reqSeatsStr != null && !reqSeatsStr.isEmpty()) ? reqSeatsStr : "null"%>;
+            let formSubmitting = false;
 
             function validateSeatsAndSubmit() {
                 const selectedSeats = document.querySelectorAll('.seat-checkbox:checked');
@@ -331,8 +332,17 @@
                 }
 
                 // If validation passes, submit the form
+                formSubmitting = true;
                 document.querySelector('form').submit();
             }
+
+            window.addEventListener('beforeunload', function (e) {
+                if (formSubmitting) {
+                    return;
+                }
+                e.preventDefault();
+                e.returnValue = '';
+            });
             document.addEventListener('DOMContentLoaded', function () {
                 const isReturnTrip = <%= isReturnTrip%>;
                 const pricePerSeat = <%= session.getAttribute("price") != null ? session.getAttribute("price") : 0.0%>;
