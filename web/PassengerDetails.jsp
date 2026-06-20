@@ -26,12 +26,14 @@
         Double accumulatedPrice = (Double) session.getAttribute("accumulated_price");
     %>
 
-    <div class="main-container">
+    <div class="main-container" style="margin-top: 50px;">
 
-        <div class="tab-nav">
-            <a href="#" class="tab active"><i class="fa-solid fa-magnifying-glass"></i> Book Trip</a>
-            <a href="customer.jsp" class="tab"><i class="fa-solid fa-ticket"></i> My Bookings</a>
-            <a href="profile.jsp" class="tab"><i class="fa-regular fa-user"></i> Profile</a>
+        <div style="text-align: center; margin-bottom: 30px;">
+            <div class="tab-nav" style="display: inline-flex;">
+                <a href="#" class="tab active"><i class="fa-solid fa-magnifying-glass"></i> Book Trip</a>
+                <a href="customer.jsp" class="tab"><i class="fa-solid fa-ticket"></i> My Bookings</a>
+                <a href="profile.jsp" class="tab"><i class="fa-regular fa-user"></i> Profile</a>
+            </div>
         </div>
 
         <br>
@@ -297,5 +299,8 @@ const seatAges = {};
         });
     </script>
 
+    <footer class="main-footer">
+        &copy; 2026 Sani Express. All rights reserved.
+    </footer>
 </body>
 </html>

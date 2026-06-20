@@ -41,7 +41,7 @@
     <body>
         <jsp:include page="header.jsp" />
 
-        <div class="main-container">
+        <div class="main-container" style="margin-top: 50px;">
             <h2 class="section-title">Order Confirmation</h2>
 
             <div class="layout-grid">
@@ -95,8 +95,11 @@
                         <span>Total Amount:</span>
                         <span class="total-price">RM <%= String.format("%.2f", Double.parseDouble(totalPrice)) %></span>
                     </div>
-                </div>
             </div>
         </div>
+
+        <footer class="main-footer">
+            &copy; 2026 Sani Express. All rights reserved.
+        </footer>
     </body>
 </html>

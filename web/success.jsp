@@ -248,5 +248,9 @@
             <% } %>
 
         </div>
+
+        <footer class="main-footer">
+            &copy; 2026 Sani Express. All rights reserved.
+        </footer>
     </body>
 </html>

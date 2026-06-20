@@ -31,18 +31,29 @@
 <h1><%=session.getAttribute("passengerId")%></h1>-->
 
 
-                        <div class="main-container">
+                        <div class="main-container" style="margin-top: 50px;">
 
-                            <div class="tab-nav" style="margin-top: 20px;">
-                                <a href="#" class="tab active"><i class="fa-solid fa-magnifying-glass"></i> Book
-                                    Trip</a>
-                                <a href="customer.jsp" class="tab"><i class="fa-solid fa-ticket"></i> My Bookings</a>
-                                <a href="profile.jsp" class="tab"><i class="fa-regular fa-user"></i> Profile</a>
+                            <div style="text-align: center; margin-bottom: 30px;">
+                                <div class="tab-nav" style="margin-top: 20px; display: inline-flex;">
+                                    <a href="#" class="tab active"><i class="fa-solid fa-magnifying-glass"></i> Book
+                                        Trip</a>
+                                    <a href="customer.jsp" class="tab"><i class="fa-solid fa-ticket"></i> My
+                                        Bookings</a>
+                                    <a href="profile.jsp" class="tab"><i class="fa-regular fa-user"></i> Profile</a>
+                                </div>
+
+                                <div style="margin-top: 25px;">
+                                    <h2
+                                        style="font-size: 32px; font-weight: 800; color: #1f2937; margin: 0 0 10px 0; letter-spacing: -0.5px;">
+                                        Where are you traveling next?</h2>
+                                    <p style="color: #6b7280; font-size: 16px; margin: 0;">Find the best routes and book
+                                        your bus tickets today!</p>
+                                </div>
                             </div>
 
-                            <div class="search-card" style="margin-top: 20px;">
-                                <h2 class="card-title"><i class="fa-solid fa-magnifying-glass"></i> Search Bus Trips
-                                </h2>
+                            <div class="search-card">
+                                <h2 class="card-title" style="margin-bottom: 25px; color: #cc2525; font-size: 18px;"><i
+                                        class="fa-solid fa-magnifying-glass"></i> Search Bus Trips</h2>
 
                                 <form action="booking" method="GET">
 
@@ -269,7 +280,7 @@
                                                                                                                 style="text-align: left; font-size: 14px; color: #555;">
                                                                                                                 <!-- Selected trip info will be placed here -->
                                                                                                             </div>
-                                                                                                            
+
                                                                                                             <button
                                                                                                                 type="button"
                                                                                                                 class="btn-submit"
@@ -304,12 +315,16 @@
 
                                 document.querySelectorAll('.out-btn').forEach(btn => {
                                     btn.innerHTML = 'Select';
-                                    btn.style.backgroundColor = '#cc2525';
+                                    btn.style.backgroundColor = '';
+                                    btn.style.color = '';
+                                    btn.style.borderColor = '';
                                     btn.closest('.trip-card').style.borderLeft = 'none';
                                 });
 
                                 btnElem.innerHTML = '<i class="fa-solid fa-check"></i> Selected';
                                 btnElem.style.backgroundColor = '#2e7d32';
+                                btnElem.style.color = 'white';
+                                btnElem.style.borderColor = '#2e7d32';
 
                                 checkProceedVisibility();
                             }
@@ -326,11 +341,15 @@
 
                                 document.querySelectorAll('.ret-btn').forEach(btn => {
                                     btn.innerHTML = 'Select';
-                                    btn.style.backgroundColor = '#cc2525';
+                                    btn.style.backgroundColor = '';
+                                    btn.style.color = '';
+                                    btn.style.borderColor = '';
                                 });
 
                                 btnElem.innerHTML = '<i class="fa-solid fa-check"></i> Selected';
                                 btnElem.style.backgroundColor = '#2e7d32';
+                                btnElem.style.color = 'white';
+                                btnElem.style.borderColor = '#2e7d32';
 
                                 checkProceedVisibility();
                             }
@@ -344,10 +363,10 @@
 
                                 let infoHtml = '';
                                 if (outTrip) {
-//                                    infoHtml += `<div style="font-weight: 600; color: #333;"><i class="fa-solid fa-arrow-right" style="color: #cc2525;"></i> ${outInfoStr}</div>`;
+                                    //                                    infoHtml += `<div style="font-weight: 600; color: #333;"><i class="fa-solid fa-arrow-right" style="color: #cc2525;"></i> ${outInfoStr}</div>`;
                                 }
                                 if (retTrip) {
-//                                    infoHtml += `<div style="font-weight: 600; color: #333; margin-top: 8px;"><i class="fa-solid fa-arrow-left" style="color: #cc2525;"></i> ${retInfoStr}</div>`;
+                                    //                                    infoHtml += `<div style="font-weight: 600; color: #333; margin-top: 8px;"><i class="fa-solid fa-arrow-left" style="color: #cc2525;"></i> ${retInfoStr}</div>`;
                                 }
                                 infoDiv.innerHTML = infoHtml;
 
@@ -376,6 +395,10 @@
                                 document.getElementById('tripSelectionForm').submit();
                             }
                         </script>
+
+                        <footer class="main-footer">
+                            &copy; 2026 Sani Express. All rights reserved.
+                        </footer>
         </body>
 
         </html>

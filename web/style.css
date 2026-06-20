@@ -1,11 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 /* =========================================
    GLOBAL & RESET
    ========================================= */
 body {
-    background-color: #f9f9f9;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f3f4f6;
+    background-image: radial-gradient(#d1d5db 1px, transparent 1px);
+    background-size: 24px 24px;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
     margin: 0;
-    color: #333;
+    color: #1f2937;
+    -webkit-font-smoothing: antialiased;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 .main-container {
@@ -19,64 +29,82 @@ body {
    ========================================= */
 .top-header {
     background-color: #cc2525;
-    /* Sani Express Red */
+    background-image: linear-gradient(135deg, #cc2525 0%, #b01e1e 100%);
     color: white;
-    padding: 15px 40px;
+    padding: 18px 40px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    box-shadow: 0 4px 6px -1px rgba(204, 37, 37, 0.2);
+    border-radius: 0 0 20px 20px;
 }
 
 .header-branding h1 {
     margin: 0;
-    font-size: 22px;
+    font-size: 26px;
     font-weight: bold;
 }
 
 .header-branding p {
-    margin: 2px 0 0 0;
-    font-size: 13px;
+    margin: 4px 0 0 0;
+    font-size: 15px;
     font-weight: 300;
 }
 
 .header-action-btn {
     background-color: white;
+    color: #cc2525;
     border: none;
-    padding: 12px 30px;
-    border-radius: 6px;
+    padding: 10px 24px;
+    border-radius: 8px;
     cursor: pointer;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 16px;
+    transition: all 0.2s ease;
+}
+
+.header-action-btn:hover {
+    background-color: #f3f4f6;
+    transform: translateY(-1px);
 }
 
 /* =========================================
    NAVIGATION TABS & BUTTONS
    ========================================= */
 .tab-nav {
-    background-color: #f1f1f1;
+    background-color: #e5e7eb;
     display: inline-flex;
     padding: 6px;
-    border-radius: 25px;
+    border-radius: 12px;
     margin-bottom: 20px;
 }
 
 .tab {
-    padding: 8px 20px;
-    border-radius: 20px;
+    padding: 12px 28px;
+    border-radius: 8px;
     border: none;
     background: transparent;
-    font-size: 14px;
-    color: #555;
+    font-size: 16px;
+    font-weight: 500;
+    color: #4b5563;
     cursor: pointer;
     display: flex;
     align-items: center;
     gap: 8px;
     text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.tab:hover {
+    color: #1f2937;
 }
 
 .tab.active {
     background-color: white;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    font-weight: bold;
-    color: #000;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    font-weight: 600;
+    color: #cc2525;
 }
 
 .back-btn {
@@ -86,9 +114,9 @@ body {
     text-decoration: none;
     color: #333;
     font-weight: 600;
-    font-size: 14px;
+    font-size: 16px;
     margin-bottom: 20px;
-    padding: 8px 15px;
+    padding: 10px 18px;
     border: 1px solid #ddd;
     border-radius: 6px;
     background: white;
@@ -99,15 +127,15 @@ body {
    ========================================= */
 .search-card {
     background-color: white;
-    padding: 30px;
-    border-radius: 10px;
-    border: 1px solid #eaeaea;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    padding: 32px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
 }
 
 .card-title,
 .section-title {
-    font-size: 16px;
+    font-size: 20px;
     font-weight: bold;
     margin-top: 0;
     color: #333;
@@ -138,9 +166,9 @@ body {
 }
 
 .form-group label {
-    font-size: 13px;
-    font-weight: 600;
-    color: #333;
+    font-size: 16px;
+    font-weight: 500;
+    color: #4b5563;
 }
 
 .input-wrapper {
@@ -152,24 +180,26 @@ body {
 .input-wrapper i {
     position: absolute;
     left: 14px;
-    color: #888;
+    color: #9ca3af;
 }
 
 .form-control {
     width: 100%;
-    padding: 12px 15px 12px 40px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    font-size: 14px;
-    color: #333;
+    padding: 14px 15px 14px 44px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 17px;
+    color: #1f2937;
     box-sizing: border-box;
-    background-color: #fdfdfd;
+    background-color: #f9fafb;
+    transition: all 0.2s ease;
 }
 
 .form-control:focus {
     outline: none;
     border-color: #cc2525;
     background-color: white;
+    box-shadow: 0 0 0 3px rgba(204, 37, 37, 0.1);
 }
 
 /* General Submit/Action Button */
@@ -179,23 +209,25 @@ body {
     background-color: #cc2525;
     color: white;
     border: none;
-    padding: 14px;
-    border-radius: 6px;
-    font-size: 15px;
-    font-weight: bold;
+    padding: 16px;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: 600;
     cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 8px;
-    transition: background-color 0.2s;
+    transition: all 0.2s ease;
     text-decoration: none;
-    
+    box-shadow: 0 2px 4px rgba(204, 37, 37, 0.2);
 }
 
 .btn-submit:hover,
 .btn-payment:hover {
     background-color: #b01e1e;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(204, 37, 37, 0.25);
 }
 
 /* =========================================
@@ -230,7 +262,7 @@ body {
     display: flex;
     gap: 15px;
     margin-bottom: 20px;
-    font-size: 13px;
+    font-size: 15px;
     align-items: center;
 }
 
@@ -272,7 +304,7 @@ body {
 
 .driver-area {
     text-align: center;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: bold;
     color: #666;
     width: 100%;
@@ -306,7 +338,7 @@ body {
     background-color: white;
     border: 1px solid #ccc;
     border-radius: 6px;
-    font-size: 13px;
+    font-size: 15px;
     font-weight: bold;
     color: #333;
     cursor: pointer;
@@ -337,7 +369,7 @@ body {
 .summary-row {
     display: flex;
     justify-content: space-between;
-    font-size: 14px;
+    font-size: 16px;
     margin-bottom: 12px;
     color: #555;
 }
@@ -355,7 +387,7 @@ body {
 .total-row {
     display: flex;
     justify-content: space-between;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: bold;
     color: #000;
     margin-bottom: 20px;
@@ -374,40 +406,41 @@ body {
 
 .trip-card {
     background-color: white;
-    border: 1px solid #eaeaea;
-    border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 15px;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
 }
 
 .trip-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    border-color: #ccc;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+    border-color: #d1d5db;
 }
 
 .trip-info h3 {
-    margin: 0 0 5px 0;
-    font-size: 18px;
-    color: #cc2525;
+    margin: 0 0 6px 0;
+    font-size: 22px;
+    font-weight: 600;
+    color: #1f2937;
 }
 
 .trip-info .route {
-    margin: 0 0 5px 0;
-    font-weight: bold;
-    font-size: 15px;
-    color: #333;
+    margin: 0 0 6px 0;
+    font-weight: 500;
+    font-size: 17px;
+    color: #4b5563;
 }
 
 .trip-info .bus-type {
     margin: 0;
-    font-size: 13px;
-    color: #777;
+    font-size: 15px;
+    color: #6b7280;
 }
 
 .trip-action {
@@ -415,26 +448,30 @@ body {
 }
 
 .trip-action .price {
-    font-size: 20px;
+    font-size: 24px;
     font-weight: bold;
     color: #333;
     margin-bottom: 10px;
 }
 
 .btn-select {
-    background-color: #cc2525;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    font-weight: bold;
+    background-color: #f3f4f6;
+    color: #cc2525;
+    border: 1px solid #e5e7eb;
+    padding: 12px 28px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 16px;
     cursor: pointer;
-    transition: 0.2s;
+    transition: all 0.2s ease;
 }
 
 .btn-select:hover {
-    background-color: #b01e1e;
+    background-color: #cc2525;
+    color: white;
+    border-color: #cc2525;
 }
+
 /* ── profile.jsp ─────────────────────────────────────────── */
 
 /* Tab navigation */
@@ -517,40 +554,7 @@ body {
     margin-bottom: 25px;
 }
 
-/* ── header.jsp ──────────────────────────────────────────── */
-
-.top-header {
-    background-color: #cc2525;
-    color: white;
-    padding: 15px 40px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-.header-branding h1 {
-    margin: 0;
-    font-size: 22px;
-    font-weight: bold;
-}
-
-.header-branding p {
-    margin: 2px 0 0 0;
-    font-size: 13px;
-    font-weight: 300;
-}
-
-.header-action-btn {
-    background-color: white;
-    border: none;
-    padding: 12px 30px;
-    border-radius: 6px;
-    cursor: pointer;
-    text-decoration: none;
-    color: black;
-    font-weight: bold;
-}
+/* ── header.jsp (Styles consolidated in main header section) ── */
 
 /* ── customer.jsp ────────────────────────────────────────── */
 
@@ -585,7 +589,7 @@ body {
     margin-top: 8px;
     padding: 8px 12px;
     border-radius: 6px;
-    font-size: 13px;
+    font-size: 15px;
     font-weight: 500;
     align-items: center;
     gap: 8px;
@@ -614,40 +618,58 @@ body {
     gap: 4px;
     background: #d1fae5;
     color: #065f46;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 600;
     padding: 2px 8px;
     border-radius: 12px;
     margin-left: 6px;
 }
 
- .age-warning {
-            margin-top: 8px;
-            padding: 8px 12px;
-            background-color: #fff8e1;
-            border-left: 4px solid #f9a825;
-            color: #7b5e00;
-            border-radius: 4px;
-            font-size: 0.875rem;
-        }
-        .age-discount {
-            margin-top: 8px;
-            padding: 8px 12px;
-            background-color: #e8f5e9;
-            border-left: 4px solid #2e7d32;
-            color: #1b5e20;
-            border-radius: 4px;
-            font-size: 0.875rem;
-        }
-        .seat-price-detail {
-            font-size: 0.85rem;
-            color: #888;
-        }
-        .discounted-price {
-            color: #2e7d32;
-            font-weight: bold;
-        }
-        .strikethrough {
-            text-decoration: line-through;
-            color: #aaa;
-        }
+.age-warning {
+    margin-top: 8px;
+    padding: 8px 12px;
+    background-color: #fff8e1;
+    border-left: 4px solid #f9a825;
+    color: #7b5e00;
+    border-radius: 4px;
+    font-size: 0.95rem;
+}
+
+.age-discount {
+    margin-top: 8px;
+    padding: 8px 12px;
+    background-color: #e8f5e9;
+    border-left: 4px solid #2e7d32;
+    color: #1b5e20;
+    border-radius: 4px;
+    font-size: 0.95rem;
+}
+
+.seat-price-detail {
+    font-size: 0.95rem;
+    color: #888;
+}
+
+.discounted-price {
+    color: #2e7d32;
+    font-weight: bold;
+}
+
+.strikethrough {
+    text-decoration: line-through;
+    color: #aaa;
+}
+
+/* =========================================
+   FOOTER
+   ========================================= */
+.main-footer {
+    background-color: #1f2937;
+    color: white;
+    text-align: center;
+    padding: 24px;
+    font-size: 15px;
+    margin-top: auto;
+    border-top: 1px solid #374151;
+    border-radius: 20px 20px 0 0;
+}
