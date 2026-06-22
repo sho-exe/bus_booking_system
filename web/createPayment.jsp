@@ -142,7 +142,7 @@
     String referenceNo = "ORD-" + System.currentTimeMillis();
 
     String returnUrl = "http://localhost:8080/bus/success.jsp";
-    String callbackUrl = "http://localhost:8080/bus/callback.jsp";
+    String callbackUrl = "";
 
     String buyerName = (String) session.getAttribute("username");
     String buyerEmail = (String) session.getAttribute("email");
