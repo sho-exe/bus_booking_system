@@ -2,6 +2,7 @@
     <%@page import="dao.TripDAO" %>
         <%@page import="dao.BusDAO" %>
             <%@page import="dao.BookingDAO" %>
+                <%@page import="dao.AdminDAO" %>
                 <%@page contentType="text/html" pageEncoding="UTF-8" %>
                     <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
                         <!DOCTYPE html>
@@ -317,11 +318,11 @@
                                 <button class="btn-logout" onclick="location.href = 'login.html'">Logout</button>
                             </header>
 
-                            <% TripDAO tripDAO=new TripDAO(); BusDAO busDAO=new BusDAO(); BookingDAO bookingDAO=new
-                                BookingDAO(); int totalTrips=tripDAO.getAllTrips() !=null ? tripDAO.getAllTrips().size()
-                                : 0; int totalBuses=busDAO.selectAllBuses() !=null ? busDAO.selectAllBuses().size() : 0;
-                                int totalBookings=bookingDAO.getAllBookings() !=null ?
-                                bookingDAO.getAllBookings().size() : 0; %>
+                            <% TripDAO tripDAO=new TripDAO(); BusDAO busDAO=new BusDAO(); BookingDAO bookingDAO=new BookingDAO(); AdminDAO adminDAO=new AdminDAO(); 
+                                int totalTrips=tripDAO.getAllTrips() !=null ? tripDAO.getAllTrips().size() : 0; 
+                                int totalBuses=busDAO.selectAllBuses() !=null ? busDAO.selectAllBuses().size() : 0;
+                                int totalBookings=bookingDAO.getAllBookings() !=null ? bookingDAO.getAllBookings().size() : 0; 
+                                int totalDrivers=adminDAO.getAllDrivers() !=null ? adminDAO.getAllDrivers().size() : 0; %>
 
                                 <div class="admin-container">
                                     <div class="stat-cards">
@@ -346,7 +347,9 @@
                                         <div class="stat-card">
                                             <div class="stat-info">
                                                 <h3>Total Drivers</h3>
-                                                <h2>5</h2>
+                                                <h2>
+                                                    <%= totalDrivers%>
+                                                </h2>
                                             </div>
                                             <div class="stat-icon"><i class="fa-solid fa-user-group"></i></div>
                                         </div>
