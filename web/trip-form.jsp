@@ -88,5 +88,38 @@
     &copy; 2026 Sani Express. All rights reserved.
 </footer>
 
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const departureInput = document.querySelector('input[name="departureTime"]');
+        const arrivalInput = document.querySelector('input[name="arrivalTime"]');
+        const form = document.querySelector('form');
+
+        if (departureInput.value) {
+            arrivalInput.min = departureInput.value;
+        }
+
+        departureInput.addEventListener('change', function() {
+            arrivalInput.min = this.value;
+            arrivalInput.setCustomValidity('');
+        });
+
+        arrivalInput.addEventListener('change', function() {
+            arrivalInput.setCustomValidity('');
+        });
+
+        form.addEventListener('submit', function(event) {
+            if (departureInput.value && arrivalInput.value) {
+                const dep = new Date(departureInput.value);
+                const arr = new Date(arrivalInput.value);
+                
+                if (arr <= dep) {
+                    event.preventDefault();
+                    arrivalInput.setCustomValidity('Arrival time must be after departure time.');
+                    arrivalInput.reportValidity();
+                }
+            }
+        });
+    });
+</script>
 </body>
 </html>
