@@ -173,9 +173,14 @@
             box-shadow: 0 0 0 3px rgba(230, 0, 0, 0.1);
         }
 
-        .input-icon-right {
+        .input-wrapper .form-input {
+            padding-right: 40px;
+        }
+
+        .input-wrapper .input-icon-right {
             position: absolute;
-            right: 16px;
+            right: 12px;
+            left: auto;
             color: #9ca3af;
             cursor: pointer;
         }
@@ -297,6 +302,19 @@
         &copy; 2026 Sani Express. All rights reserved.
     </footer>
 
+    <script>
+        const togglePassword = document.querySelector('.input-icon-right');
+        const password = document.querySelector('input[name="password"]');
+
+        if (togglePassword && password) {
+            togglePassword.addEventListener('click', function () {
+                const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+                password.setAttribute('type', type);
+                this.classList.toggle('fa-eye');
+                this.classList.toggle('fa-eye-slash');
+            });
+        }
+    </script>
 </body>
 
 </html>
