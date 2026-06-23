@@ -73,22 +73,18 @@ public class DriverPortalServlet extends HttpServlet {
         HttpSession session = request.getSession();
         Driver loggedInDriver = (Driver) session.getAttribute("driver");
 
-        // Failsafe: If driver is not logged in, redirect to login page (mocking for now)
+        // FIX: Remove the hardcoded mock data. If null, redirect back to login.
         if (loggedInDriver == null) {
-            // For testing purposes, let's create a mock logged-in driver based on your DB insert
-            loggedInDriver = new Driver(1, "Ahmad bin Hassan", "ahmad@saniexpress.com", "012-3456789");
-            session.setAttribute("driver", loggedInDriver);
-            // In a real app, you would do: response.sendRedirect("login.jsp"); return;
+            response.sendRedirect("login.html"); // Change this to your actual login page
+            return; // Stop execution here
         }
 
         // 1. Get data from Database via DAO
         List<TripDetail> trips = driverDAO.getDriverTrips(loggedInDriver.getId());
 
-        // 2. Calculate summary statistics for the cards
+        // 2. Calculate summary statistics
         int assignedCount = trips.size();
         int upcomingCount = 0;
-
-        // Count how many trips are strictly in the future (simple logic)
         long currentTime = System.currentTimeMillis();
         for (TripDetail trip : trips) {
             if (trip.getTripDate().getTime() > currentTime) {
@@ -96,12 +92,12 @@ public class DriverPortalServlet extends HttpServlet {
             }
         }
 
-        // 3. Attach data to the request so the JSP can read it using ${...}
+        // 3. Attach data
         request.setAttribute("tripList", trips);
         request.setAttribute("assignedCount", assignedCount);
         request.setAttribute("upcomingCount", upcomingCount);
 
-        // 4. Forward the request to the JSP View
+        // 4. Forward the request
         request.getRequestDispatcher("driver_portal.jsp").forward(request, response);
 
     }

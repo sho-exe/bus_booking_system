@@ -19,7 +19,7 @@ import java.sql.SQLException;
  */
 public class DriverDAO {
 
-    private String jdbcURL = "jdbc:mysql://localhost:3306/bus";
+    private String jdbcURL = "jdbc:mysql://localhost:3307/bus";
     private String jdbcUsername = "root";
     private String jdbcPassword = "";
 
@@ -58,7 +58,7 @@ public class DriverDAO {
         
         String sql = "SELECT DATE(t.departure_time) AS trip_date, t.origin, t.destination, "
                 + "TIME(t.departure_time) AS departure_time, TIME(t.arrival_time) AS arrival_time, "
-                + "b.bus_id AS busID, b.bus_number AS busNumber, b.bus_type AS busType, b.total_seat AS totalSeat, COUNT(bk.booking_id) AS booked_seats "
+                + "b.bus_id AS busID, b.bus_number AS busNumber, b.bus_type AS busType, b.total_seats AS totalSeat, COUNT(bk.booking_id) AS booked_seats "
                 + "FROM trip t JOIN bus b ON t.bus_id = b.bus_id "
                 + "LEFT JOIN booking bk ON t.trip_id = bk.trip_id AND bk.status = 'Confirmed' "
                 + "WHERE t.driver_id = ? "
@@ -111,4 +111,22 @@ public class DriverDAO {
         }
     }
 
+    public Driver getDriverByName(String name) {
+        String sql = "SELECT * FROM driver WHERE LOWER(name) = LOWER(?)";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, name);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                Driver d = new Driver();
+                d.setId(rs.getInt("driver_id"));
+                d.setName(rs.getString("name"));
+                d.setLicenseNumber(rs.getString("license_number"));
+                d.setPhone(rs.getString("phone_number"));
+                return d;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

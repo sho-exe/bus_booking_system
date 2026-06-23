@@ -33,6 +33,9 @@ public class LoginServlet extends HttpServlet {
             if ("Admin".equalsIgnoreCase(user.getRole())) {
                 response.sendRedirect("BusServlet?action=list");
             } else if ("Driver".equalsIgnoreCase(user.getRole())) {
+                dao.DriverDAO driverDAO = new dao.DriverDAO();
+                model.Driver driver = driverDAO.getDriverByName(user.getUsername());
+                session.setAttribute("driver", driver);
                 response.sendRedirect("DriverPortal");
             } else {
                 response.sendRedirect("Booking.jsp");

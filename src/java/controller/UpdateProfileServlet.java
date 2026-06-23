@@ -86,11 +86,11 @@ public class UpdateProfileServlet extends HttpServlet {
         // 1. Get data submitted from the HTML Form
         int driverId = Integer.parseInt(request.getParameter("driverId"));
         String name = request.getParameter("name");
-        String email = request.getParameter("email");
-        String phone = request.getParameter("phone");
+        String licenseNumber = request.getParameter("license_number");
+        String phone = request.getParameter("phone_number");
 
         // 2. Create a Driver object with the new data
-        Driver updatedDriver = new Driver(driverId, name, email, phone);
+        Driver updatedDriver = new Driver(driverId, name, licenseNumber, phone);
 
         // 3. Save to database using DAO
         boolean isSuccess = driverDAO.updateDriverProfile(updatedDriver);

@@ -16,7 +16,7 @@ import model.Booking;
 
 public class BookingDAO {
 
-    private String jdbcURL = "jdbc:mysql://localhost:3306/bus";
+    private String jdbcURL = "jdbc:mysql://localhost:3307/bus";
     private String jdbcUsername = "root";
     private String jdbcPassword = "";
 
