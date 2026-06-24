@@ -7,7 +7,7 @@ import java.util.List;
 
 public class TripDAO {
 
-    private static final String DB_URL = "jdbc:mysql://localhost:3307/bus";
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/bus";
     private static final String DB_USER = "root";
     private static final String DB_PASSWORD = "";
 
@@ -162,5 +162,31 @@ public class TripDAO {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public List<String> getDistinctOrigins() {
+        List<String> list = new ArrayList<>();
+        String sql = "SELECT DISTINCT origin FROM trip WHERE origin IS NOT NULL AND origin != '' ORDER BY origin ASC";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                list.add(rs.getString("origin"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public List<String> getDistinctDestinations() {
+        List<String> list = new ArrayList<>();
+        String sql = "SELECT DISTINCT destination FROM trip WHERE destination IS NOT NULL AND destination != '' ORDER BY destination ASC";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                list.add(rs.getString("destination"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 }
