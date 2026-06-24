@@ -12,8 +12,12 @@
 
         String bookerName = (String) session.getAttribute("booker_name");
         String bookerPhone = (String) session.getAttribute("booker_phone");
-        if (bookerName == null || bookerName.trim().isEmpty()) bookerName = "Guest Customer";
-        if (bookerPhone == null || bookerPhone.trim().isEmpty()) bookerPhone = "0100000000";
+        if (bookerName == null || bookerName.trim().isEmpty()) {
+            bookerName = "Guest Customer";
+        }
+        if (bookerPhone == null || bookerPhone.trim().isEmpty()) {
+            bookerPhone = "0100000000";
+        }
 
         PreparedStatement checkPhoneStmt = conn.prepareStatement("SELECT id, username, email FROM users WHERE phone_number = ?");
         checkPhoneStmt.setString(1, bookerPhone);
@@ -37,8 +41,8 @@
         String username = bookerName;
 
         PreparedStatement insertUserStmt = conn.prepareStatement(
-            "INSERT INTO users (username, email, password, role, phone_number) VALUES (?, ?, ?, ?, ?)",
-            Statement.RETURN_GENERATED_KEYS
+                "INSERT INTO users (username, email, password, role, phone_number) VALUES (?, ?, ?, ?, ?)",
+                Statement.RETURN_GENERATED_KEYS
         );
         insertUserStmt.setString(1, username);
         insertUserStmt.setString(2, email);
@@ -49,7 +53,9 @@
 
         ResultSet rsKeys = insertUserStmt.getGeneratedKeys();
         int userId = 0;
-        if (rsKeys.next()) userId = rsKeys.getInt(1);
+        if (rsKeys.next()) {
+            userId = rsKeys.getInt(1);
+        }
         rsKeys.close();
         insertUserStmt.close();
 
@@ -62,14 +68,16 @@
     }
 
     private void insertLeg(Connection conn, String tripIdStr, String[] seats, String[] names, String[] ages,
-                           int userId, java.util.List<Integer> bookingIds) throws Exception {
-        if (tripIdStr == null || seats == null || seats.length == 0) return;
+            int userId, java.util.List<Integer> bookingIds) throws Exception {
+        if (tripIdStr == null || seats == null || seats.length == 0) {
+            return;
+        }
 
         int tripId = Integer.parseInt(tripIdStr);
         PreparedStatement passengerStmt = conn.prepareStatement(
-            "INSERT INTO Passenger (name, age) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS);
+                "INSERT INTO Passenger (name, age) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS);
         PreparedStatement bookingStmt = conn.prepareStatement(
-            "INSERT INTO Booking (passenger_id, trip_id, seat, user_id) VALUES (?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+                "INSERT INTO Booking (passenger_id, trip_id, seat, user_id) VALUES (?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
 
         for (int i = 0; i < seats.length; i++) {
             String name = (names != null && names.length > i) ? names[i] : "Passenger";
@@ -89,7 +97,9 @@
                 bookingStmt.executeUpdate();
 
                 ResultSet brs = bookingStmt.getGeneratedKeys();
-                if (brs.next()) bookingIds.add(brs.getInt(1));
+                if (brs.next()) {
+                    bookingIds.add(brs.getInt(1));
+                }
                 brs.close();
             }
             prs.close();
@@ -148,13 +158,13 @@
                 double amountPerBooking = totalPaid / savedBookingIds.size();
 
                 PreparedStatement updateBookingStmt = conn.prepareStatement(
-                    "UPDATE Booking SET status = ? WHERE booking_id = ?"
+                        "UPDATE Booking SET status = ? WHERE booking_id = ?"
                 );
 
                 PreparedStatement paymentStmt = conn.prepareStatement(
-                    "INSERT INTO payment "
-                    + "(booking_id, amount, bank, transaction_id, bill_code, buyer_email, buyer_name, status) "
-                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+                        "INSERT INTO payment "
+                        + "(booking_id, amount, bank, transaction_id, bill_code, buyer_email, buyer_name, status) "
+                        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
                 );
 
                 for (Integer bookingId : savedBookingIds) {
@@ -185,11 +195,17 @@
             bookingSaved = false;
             saveError = e.getMessage();
             if (conn != null) {
-                try { conn.rollback(); } catch (Exception ignore) {}
+                try {
+                    conn.rollback();
+                } catch (Exception ignore) {
+                }
             }
         } finally {
             if (conn != null) {
-                try { conn.close(); } catch (Exception ignore) {}
+                try {
+                    conn.close();
+                } catch (Exception ignore) {
+                }
             }
         }
     }
@@ -214,28 +230,118 @@
         <title>Payment Result - Sani Express</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
         <link rel="stylesheet" href="style.css">
+        <style>
+            .success-actions {
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 14px;
+                margin-top: 25px;
+            }
+
+            .success-btn {
+                width: 100%;
+                max-width: 420px;
+                box-sizing: border-box;
+
+                padding: 15px 20px;
+                border-radius: 10px;
+
+                font-size: 17px;
+                font-weight: 700;
+                text-decoration: none;
+
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 10px;
+
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+
+                transition: all 0.2s ease;
+            }
+
+            .success-btn.primary {
+                background: #d71920;
+                color: white;
+                box-shadow: 0 4px 10px rgba(215, 25, 32, 0.25);
+            }
+
+            .success-btn.primary:hover {
+                background: #b9151b;
+                transform: translateY(-1px);
+            }
+
+            .success-btn.secondary {
+                background: #f4f5f7;
+                color: #374151;
+                border: 1px solid #e5e7eb;
+            }
+
+            .success-btn.secondary:hover {
+                background: #e9ecef;
+            }
+
+            @media (max-width: 480px) {
+                .success-btn {
+                    max-width: 100%;
+                    font-size: 15px;
+                    padding: 13px 14px;
+                }
+            }
+        </style>
     </head>
     <body>
         <jsp:include page="header.jsp" />
 
         <div class="main-container" style="max-width: 650px; margin: 40px auto; text-align: center; padding: 40px; background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
 
-            <% if (paymentSuccess && bookingSaved) { %>
+            <% if (paymentSuccess && bookingSaved) {%>
             <div style="font-size: 60px; color: #16a34a; margin-bottom: 20px;">
                 <i class="fa-solid fa-circle-check"></i>
             </div>
             <h1 style="color: #16a34a; margin-bottom: 15px;">Payment Successful!</h1>
             <p style="color: #6b7280; margin-bottom: 20px;">Your payment and booking were completed successfully.</p>
-            <p style="color: #6b7280; margin-bottom: 30px;">Reference number: <strong><%= referenceNo %></strong></p>
+            <p style="color: #6b7280; margin-bottom: 30px;">Reference number: <strong><%= referenceNo%></strong></p>
 
-            <a href="customer.jsp" class="btn-payment">View Tickets</a>
+            <div class="success-actions">
 
-            <% } else if (paymentSuccess) { %>
+                <% if (savedBookingIds != null && !savedBookingIds.isEmpty()) { %>
+
+                <% for (Integer ticketBookingId : savedBookingIds) {%>
+                <a href="ReceiptPDFServlet?booking_id=<%= ticketBookingId%>"
+                   class="success-btn primary"
+                   target="_blank">
+                    <i class="fa-solid fa-ticket"></i>
+                    View E-Ticket #<%= ticketBookingId%>
+                </a>
+                <% } %>
+
+                <a href="customer.jsp" class="success-btn secondary">
+                    <i class="fa-solid fa-list"></i>
+                    Go to My Bookings
+                </a>
+
+                <% } else { %>
+
+                <a href="customer.jsp" class="success-btn primary">
+                    <i class="fa-solid fa-ticket"></i>
+                    View My Bookings
+                </a>
+
+                <% } %>
+
+            </div>
+
+            <% } else if (paymentSuccess) {%>
             <div style="font-size: 60px; color: #dc2626; margin-bottom: 20px;">
                 <i class="fa-solid fa-triangle-exclamation"></i>
             </div>
             <h1 style="color: #dc2626; margin-bottom: 15px;">Payment Successful, Booking Save Failed</h1>
-            <p style="color: #6b7280; margin-bottom: 30px;">Error: <%= saveError != null ? saveError : "Unknown database error" %></p>
+            <p style="color: #6b7280; margin-bottom: 30px;">Error: <%= saveError != null ? saveError : "Unknown database error"%></p>
             <a href="Booking.jsp" class="btn-payment">Back to Booking</a>
 
             <% } else { %>
@@ -245,7 +351,7 @@
             <h1 style="color: #dc2626; margin-bottom: 15px;">Payment Failed</h1>
             <p style="color: #6b7280; margin-bottom: 30px;">Your transaction could not be completed. No booking was saved.</p>
             <a href="SelectSeat.jsp" class="btn-payment">Try Again</a>
-            <% } %>
+            <% }%>
 
         </div>
 

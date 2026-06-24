@@ -1,6 +1,8 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="java.io.*"%>
 <%@page import="java.net.*"%>
+<%@page import="java.sql.*"%>
+
 <%
     request.setCharacterEncoding("UTF-8");
 
@@ -14,47 +16,69 @@
         names = (String[]) session.getAttribute("pending_out_names");
     }
 
-    String[] ages  = request.getParameterValues("passenger_age");
+    String[] ages = request.getParameterValues("passenger_age");
     if (ages == null || ages.length == 0) {
         ages = (String[]) session.getAttribute("pending_out_ages");
     }
 
-    String bookerName  = request.getParameter("booker_name");
+    String bookerName = request.getParameter("booker_name");
     String bookerPhone = request.getParameter("booker_phone");
-    if (bookerName != null) session.setAttribute("booker_name", bookerName);
-    if (bookerPhone != null) session.setAttribute("booker_phone", bookerPhone);
+    String bookerEmail = request.getParameter("booker_email");
+
+    if (bookerName != null && !bookerName.trim().isEmpty()) {
+        session.setAttribute("booker_name", bookerName.trim());
+    }
+
+    if (bookerPhone != null && !bookerPhone.trim().isEmpty()) {
+        session.setAttribute("booker_phone", bookerPhone.trim());
+    }
+
+    if (bookerEmail != null && !bookerEmail.trim().isEmpty()) {
+        session.setAttribute("booker_email", bookerEmail.trim());
+        session.setAttribute("email", bookerEmail.trim());
+    }
 
     String reqTotalStr = request.getParameter("total_price");
     double currentTotal = 0.0;
+
     try {
-        currentTotal = (reqTotalStr != null && !reqTotalStr.trim().isEmpty()) ? Double.parseDouble(reqTotalStr) : 0.0;
+        if (reqTotalStr != null && !reqTotalStr.trim().isEmpty()) {
+            currentTotal = Double.parseDouble(reqTotalStr);
+        }
     } catch (NumberFormatException e) {
         currentTotal = 0.0;
     }
 
     if (currentTotal == 0.0 && seats != null) {
         double pricePerSeat = 0.0;
+
         Object priceAttr = session.getAttribute("price");
         if (priceAttr != null) {
             pricePerSeat = Double.parseDouble(String.valueOf(priceAttr));
         }
+
         for (int i = 0; i < seats.length; i++) {
             double seatPrice = pricePerSeat;
-            if (ages != null && ages.length > i && ages[i] != null && !ages[i].isEmpty()) {
+
+            if (ages != null && ages.length > i && ages[i] != null && !ages[i].trim().isEmpty()) {
                 try {
-                    int age = Integer.parseInt(ages[i]);
+                    int age = Integer.parseInt(ages[i].trim());
+
                     if (age >= 60) {
                         seatPrice = pricePerSeat * 0.5;
                     }
+
                 } catch (NumberFormatException e) {
-                    // Ignore
+                    // Ignore invalid age
                 }
             }
+
             currentTotal += seatPrice;
         }
     }
 
     String currentTripId = String.valueOf(session.getAttribute("trip_id"));
+
     if (currentTripId == null || "null".equals(currentTripId) || seats == null || seats.length == 0) {
         out.println("<h2>Missing booking details.</h2>");
         out.println("<p>Please select your seat again.</p>");
@@ -63,10 +87,12 @@
     }
 
     /*
-       If this is the first leg of a round trip, do NOT create payment yet.
-       Save outbound details in session, then redirect user to choose return seats.
+       ROUND TRIP FIRST LEG
+       If return_trip_id exists, save outbound booking first.
+       Payment will only happen after return seat is selected.
     */
     String returnTripId = request.getParameter("return_trip_id");
+
     if (returnTripId != null && !returnTripId.trim().isEmpty()) {
         session.setAttribute("pending_out_trip_id", currentTripId);
         session.setAttribute("pending_out_seats", seats);
@@ -101,10 +127,12 @@
     }
 
     /*
-       One-way trip OR final return trip.
-       Store booking details in session. Actual DB insert happens in success.jsp only after payment success.
+       ONE WAY TRIP OR FINAL RETURN TRIP
+       Save booking data into session.
+       Actual booking insert happens in success.jsp after payment success.
     */
     Double outboundTotal = (Double) session.getAttribute("pending_out_total");
+
     if (outboundTotal != null) {
         session.setAttribute("pending_return_trip_id", currentTripId);
         session.setAttribute("pending_return_seats", seats);
@@ -112,8 +140,9 @@
         session.setAttribute("pending_return_ages", ages);
         session.setAttribute("pending_return_total", currentTotal);
 
-        double finalTotal = (outboundTotal + currentTotal) * 0.90; // 10% round-trip discount
+        double finalTotal = (outboundTotal + currentTotal) * 0.90;
         session.setAttribute("total_price", finalTotal);
+
     } else {
         session.setAttribute("pending_out_trip_id", currentTripId);
         session.setAttribute("pending_out_seats", seats);
@@ -127,11 +156,8 @@
     session.removeAttribute("outbound_passenger_names");
     session.removeAttribute("outbound_passenger_ages");
 
-    // ToyyibPay API details
-    String secretKey = "18v1vjgx-wk1v-6vvm-9dob-a0vi50we9sp3";
-    String categoryCode = "2mnt69lt";
-
     Object totalObj = session.getAttribute("total_price");
+
     if (totalObj == null) {
         response.sendRedirect("Booking.jsp");
         return;
@@ -141,16 +167,301 @@
     int totalSen = (int) Math.round(totalPrice * 100);
     String referenceNo = "ORD-" + System.currentTimeMillis();
 
-    String returnUrl = "http://localhost:8080/bus/success.jsp";
-    String callbackUrl = "";
-
+    /*
+       CUSTOMER DETAILS FOR TOYYIBPAY
+    */
     String buyerName = (String) session.getAttribute("username");
     String buyerEmail = (String) session.getAttribute("email");
-    String buyerPhone = (String) session.getAttribute("booker_phone");
+    String buyerPhone = (String) session.getAttribute("phoneNumber");
 
-    if (buyerName == null || buyerName.trim().isEmpty()) buyerName = (String) session.getAttribute("booker_name");
-    if (buyerEmail == null || buyerEmail.trim().isEmpty()) buyerEmail = "guest" + System.currentTimeMillis() + "@guest.com";
-    if (buyerPhone == null || buyerPhone.trim().isEmpty()) buyerPhone = "0100000000";
+    String sessionBookerName = (String) session.getAttribute("booker_name");
+    String sessionBookerPhone = (String) session.getAttribute("booker_phone");
+    String sessionBookerEmail = (String) session.getAttribute("booker_email");
+
+    if (buyerName == null || buyerName.trim().isEmpty()) {
+        buyerName = sessionBookerName;
+    }
+
+    if (buyerEmail == null || buyerEmail.trim().isEmpty()) {
+        buyerEmail = sessionBookerEmail;
+    }
+
+    if (buyerPhone == null || buyerPhone.trim().isEmpty()) {
+        buyerPhone = sessionBookerPhone;
+    }
+
+    if (buyerName == null || buyerName.trim().isEmpty()) {
+        buyerName = "Guest Customer";
+    }
+
+    if (buyerPhone == null || buyerPhone.trim().isEmpty()) {
+        buyerPhone = "0100000000";
+    }
+
+    /*
+       Create or find customer before ToyyibPay.
+       This prevents createPayment.jsp from rejecting new customers.
+    */
+    Connection dbConn = null;
+
+    try {
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        dbConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/bus", "root", "");
+
+        String passengerIdStr = (String) session.getAttribute("passengerId");
+
+        /*
+           1. If passengerId exists, get latest user info from database.
+        */
+        if (passengerIdStr != null && !passengerIdStr.trim().isEmpty()) {
+            PreparedStatement psUser = dbConn.prepareStatement(
+                    "SELECT id, username, email, phone_number FROM users WHERE id = ? LIMIT 1"
+            );
+            psUser.setString(1, passengerIdStr);
+
+            ResultSet rsUser = psUser.executeQuery();
+
+            if (rsUser.next()) {
+                String dbUsername = rsUser.getString("username");
+                String dbEmail = rsUser.getString("email");
+                String dbPhone = rsUser.getString("phone_number");
+
+                if (dbUsername != null && !dbUsername.trim().isEmpty()) {
+                    buyerName = dbUsername;
+                }
+
+                if (dbEmail != null && !dbEmail.trim().isEmpty()) {
+                    buyerEmail = dbEmail;
+                }
+
+                if (dbPhone != null && !dbPhone.trim().isEmpty()) {
+                    buyerPhone = dbPhone;
+                }
+
+                session.setAttribute("passengerId", rsUser.getString("id"));
+                session.setAttribute("username", buyerName);
+                session.setAttribute("email", buyerEmail);
+                session.setAttribute("phoneNumber", buyerPhone);
+                session.setAttribute("userRole", "customer");
+            }
+
+            rsUser.close();
+            psUser.close();
+        }
+
+        /*
+           2. If no passengerId or no email, find customer by phone number.
+        */
+        if ((buyerEmail == null || buyerEmail.trim().isEmpty())
+                && buyerPhone != null && !buyerPhone.trim().isEmpty()) {
+
+            PreparedStatement psPhone = dbConn.prepareStatement(
+                    "SELECT id, username, email, phone_number FROM users WHERE phone_number = ? LIMIT 1"
+            );
+            psPhone.setString(1, buyerPhone);
+
+            ResultSet rsPhone = psPhone.executeQuery();
+
+            if (rsPhone.next()) {
+                String dbUsername = rsPhone.getString("username");
+                String dbEmail = rsPhone.getString("email");
+                String dbPhone = rsPhone.getString("phone_number");
+
+                if (dbUsername != null && !dbUsername.trim().isEmpty()) {
+                    buyerName = dbUsername;
+                }
+
+                if (dbEmail != null && !dbEmail.trim().isEmpty()) {
+                    buyerEmail = dbEmail;
+                }
+
+                if (dbPhone != null && !dbPhone.trim().isEmpty()) {
+                    buyerPhone = dbPhone;
+                }
+
+                session.setAttribute("passengerId", rsPhone.getString("id"));
+                session.setAttribute("username", buyerName);
+                session.setAttribute("email", buyerEmail);
+                session.setAttribute("phoneNumber", buyerPhone);
+                session.setAttribute("userRole", "customer");
+            }
+
+            rsPhone.close();
+            psPhone.close();
+        }
+
+        /*
+           3. If customer exists but email is still empty, generate one and update user.
+        */
+        String existingPassengerId = (String) session.getAttribute("passengerId");
+
+        if ((buyerEmail == null || buyerEmail.trim().isEmpty())
+                && existingPassengerId != null && !existingPassengerId.trim().isEmpty()) {
+
+            String cleanName = buyerName.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+            String cleanPhone = buyerPhone.replaceAll("[^0-9]", "");
+
+            if (cleanName.trim().isEmpty()) {
+                cleanName = "guest";
+            }
+
+            if (cleanPhone.trim().isEmpty()) {
+                cleanPhone = String.valueOf(System.currentTimeMillis());
+            }
+
+            buyerEmail = cleanName + "_" + cleanPhone + "@guest.com";
+
+            PreparedStatement psUpdateEmail = dbConn.prepareStatement(
+                    "UPDATE users SET email = ? WHERE id = ?"
+            );
+            psUpdateEmail.setString(1, buyerEmail);
+            psUpdateEmail.setString(2, existingPassengerId);
+            psUpdateEmail.executeUpdate();
+            psUpdateEmail.close();
+
+            session.setAttribute("email", buyerEmail);
+        }
+
+        /*
+           4. If customer still does not exist, create new guest customer.
+        */
+        if (session.getAttribute("passengerId") == null
+                || String.valueOf(session.getAttribute("passengerId")).trim().isEmpty()) {
+
+            String cleanName = buyerName.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+            String cleanPhone = buyerPhone.replaceAll("[^0-9]", "");
+
+            if (cleanName.trim().isEmpty()) {
+                cleanName = "guest";
+            }
+
+            if (cleanPhone.trim().isEmpty()) {
+                cleanPhone = String.valueOf(System.currentTimeMillis());
+            }
+
+            if (buyerEmail == null || buyerEmail.trim().isEmpty()) {
+                buyerEmail = cleanName + "_" + cleanPhone + "@guest.com";
+            }
+
+            String generatedUsername = buyerName;
+
+            /*
+               Avoid duplicate username.
+            */
+            PreparedStatement psCheckUsername = dbConn.prepareStatement(
+                    "SELECT COUNT(*) FROM users WHERE username = ?"
+            );
+            psCheckUsername.setString(1, generatedUsername);
+
+            ResultSet rsCheckUsername = psCheckUsername.executeQuery();
+
+            if (rsCheckUsername.next() && rsCheckUsername.getInt(1) > 0) {
+                generatedUsername = buyerName + "_" + cleanPhone;
+            }
+
+            rsCheckUsername.close();
+            psCheckUsername.close();
+
+            /*
+               Avoid duplicate email.
+            */
+            PreparedStatement psCheckEmail = dbConn.prepareStatement(
+                    "SELECT COUNT(*) FROM users WHERE email = ?"
+            );
+            psCheckEmail.setString(1, buyerEmail);
+
+            ResultSet rsCheckEmail = psCheckEmail.executeQuery();
+
+            if (rsCheckEmail.next() && rsCheckEmail.getInt(1) > 0) {
+                buyerEmail = cleanName + "_" + System.currentTimeMillis() + "@guest.com";
+            }
+
+            rsCheckEmail.close();
+            psCheckEmail.close();
+
+            PreparedStatement psInsertUser = dbConn.prepareStatement(
+                    "INSERT INTO users (username, email, password, role, phone_number) VALUES (?, ?, ?, ?, ?)",
+                    Statement.RETURN_GENERATED_KEYS
+            );
+
+            psInsertUser.setString(1, generatedUsername);
+            psInsertUser.setString(2, buyerEmail);
+            psInsertUser.setString(3, "123456");
+            psInsertUser.setString(4, "customer");
+            psInsertUser.setString(5, buyerPhone);
+
+            psInsertUser.executeUpdate();
+
+            ResultSet rsKeys = psInsertUser.getGeneratedKeys();
+
+            if (rsKeys.next()) {
+                String newUserId = String.valueOf(rsKeys.getInt(1));
+
+                buyerName = generatedUsername;
+
+                session.setAttribute("passengerId", newUserId);
+                session.setAttribute("username", buyerName);
+                session.setAttribute("email", buyerEmail);
+                session.setAttribute("phoneNumber", buyerPhone);
+                session.setAttribute("userRole", "customer");
+            }
+
+            rsKeys.close();
+            psInsertUser.close();
+        }
+
+    } catch (Exception e) {
+        out.println("<h2>Error preparing customer for payment.</h2>");
+        out.println("<pre>" + e.getMessage() + "</pre>");
+        return;
+
+    } finally {
+        if (dbConn != null) {
+            try {
+                dbConn.close();
+            } catch (Exception ignore) {
+            }
+        }
+    }
+
+    /*
+       Final fallback.
+       This should rarely happen, but prevents payment crash.
+    */
+    if (buyerEmail == null || buyerEmail.trim().isEmpty()) {
+        String cleanName = buyerName.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+        String cleanPhone = buyerPhone.replaceAll("[^0-9]", "");
+
+        if (cleanName.trim().isEmpty()) {
+            cleanName = "guest";
+        }
+
+        if (cleanPhone.trim().isEmpty()) {
+            cleanPhone = String.valueOf(System.currentTimeMillis());
+        }
+
+        buyerEmail = cleanName + "_" + cleanPhone + "@guest.com";
+        session.setAttribute("email", buyerEmail);
+    }
+
+    if (buyerName == null || buyerName.trim().isEmpty()) {
+        buyerName = "Guest Customer";
+        session.setAttribute("username", buyerName);
+    }
+
+    if (buyerPhone == null || buyerPhone.trim().isEmpty()) {
+        buyerPhone = "0100000000";
+        session.setAttribute("phoneNumber", buyerPhone);
+    }
+
+    /*
+       TOYYIBPAY API DETAILS
+    */
+    String secretKey = "18v1vjgx-wk1v-6vvm-9dob-a0vi50we9sp3";
+    String categoryCode = "2mnt69lt";
+
+    String returnUrl = "http://localhost:8080/bus/success.jsp";
+    String callbackUrl = "";
 
     String params
             = "userSecretKey=" + URLEncoder.encode(secretKey, "UTF-8")
@@ -170,6 +481,7 @@
     try {
         URL url = new URL("https://dev.toyyibpay.com/index.php/api/createBill");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
         conn.setRequestMethod("POST");
         conn.setDoOutput(true);
         conn.setConnectTimeout(15000);
@@ -181,17 +493,27 @@
         }
 
         int responseCode = conn.getResponseCode();
-        BufferedReader br = new BufferedReader(new InputStreamReader(
-                responseCode >= 200 && responseCode < 300 ? conn.getInputStream() : conn.getErrorStream(), "UTF-8"));
+
+        BufferedReader br = new BufferedReader(
+                new InputStreamReader(
+                        responseCode >= 200 && responseCode < 300
+                                ? conn.getInputStream()
+                                : conn.getErrorStream(),
+                        "UTF-8"
+                )
+        );
 
         StringBuilder sb = new StringBuilder();
         String line;
+
         while ((line = br.readLine()) != null) {
             sb.append(line);
         }
+
         br.close();
 
         String responseData = sb.toString();
+
         if (responseCode != 200 || responseData == null || !responseData.contains("BillCode")) {
             out.println("<h2>ToyyibPay Error</h2>");
             out.println("<pre>" + responseData + "</pre>");
@@ -208,6 +530,7 @@
     } catch (UnknownHostException e) {
         out.println("<h2>Cannot connect to ToyyibPay sandbox.</h2>");
         out.println("<p>Your server cannot resolve dev.toyyibpay.com. Try another DNS, another WiFi, or phone hotspot.</p>");
+
     } catch (Exception e) {
         out.println("<h2>Payment connection error.</h2>");
         out.println("<pre>" + e.getMessage() + "</pre>");
